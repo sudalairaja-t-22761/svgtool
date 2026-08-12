@@ -1,0 +1,136 @@
+<div class="modal-overlay hidden" id="multiUploadModal">
+  <div class="modal-overlay-bg"></div>
+  <div class="modal multi-upload-modal">
+    <div class="modal-header">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Selected Icons Customise
+      </h3>
+      <button class="modal-close" id="multiUploadCloseBtn">&times;</button>
+    </div>
+    <div class="modal-body multi-upload-body">
+      <div class="multi-upload-left">
+        <div class="multi-upload-subtitle">Selected Icons</div>
+        <div class="multi-upload-grid" id="multiUploadIconGrid"></div>
+        <label class="multi-upload-name-toggle">
+          <input type="checkbox" id="multiUploadKeepNames" checked>
+          <span>Use the same icon names</span>
+        </label>
+      </div>
+      <div class="multi-upload-right">
+        <h4 class="doc-right-panel-title">Customise</h4>
+
+        <div class="doc-control-group">
+          <label class="doc-control-label">Color Mode</label>
+          <div class="doc-color-mode-btns doc-color-mode-btns--vertical" id="multiUploadModeBtns">
+            <button class="doc-mode-btn active" data-colormode="original">Original</button>
+            <button class="doc-mode-btn" data-colormode="single">Single</button>
+            <button class="doc-mode-btn" data-colormode="multi">Multi</button>
+          </div>
+        </div>
+
+        <div class="doc-control-group hidden" id="multiUploadSingleColorGroup">
+          <label class="doc-control-label">Color</label>
+          <div class="doc-color-picker-wrap">
+            <input type="color" id="multiUploadSingleColor" value="#1B73E8" class="doc-color-input">
+            <input type="text" id="multiUploadSingleColorHex" value="#1B73E8" class="doc-color-hex" maxlength="7">
+          </div>
+        </div>
+
+        <div class="doc-control-group hidden" id="multiUploadFillGroup">
+          <label class="doc-control-label">Fill Color</label>
+          <div class="doc-color-picker-wrap">
+            <input type="color" id="multiUploadFill" value="#1B73E8" class="doc-color-input">
+            <input type="text" id="multiUploadFillHex" value="#1B73E8" class="doc-color-hex" maxlength="7">
+          </div>
+        </div>
+
+        <div class="doc-control-group hidden" id="multiUploadStrokeGroup">
+          <label class="doc-control-label">Stroke Color</label>
+          <div class="doc-color-picker-wrap">
+            <input type="color" id="multiUploadStroke" value="#D93025" class="doc-color-input">
+            <input type="text" id="multiUploadStrokeHex" value="#D93025" class="doc-color-hex" maxlength="7">
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-sm" id="multiUploadApplyBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Apply to Selected Icons
+        </button>
+
+        <button class="btn btn-ghost btn-sm hidden" id="multiUploadCombineBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 8h8v8H8z"/><path d="M4 4h8v8"/><path d="M12 12h8v8"/></svg>
+          Combine Icons
+        </button>
+
+        <div class="multi-upload-naming hidden" id="multiUploadNamingSection">
+          <div class="settings-group">
+            <h4>Naming Convention</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="uploadSetGSuffix">G Element ID Suffix</label>
+                <input type="text" id="uploadSetGSuffix" value="CrmZCI">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="uploadSetPrefix">Symbol / CSS Prefix</label>
+                <input type="text" id="uploadSetPrefix" value="zcicn-">
+              </div>
+              <div class="form-group">
+                <label for="uploadSetSSuffix">Symbol / CSS Suffix</label>
+                <input type="text" id="uploadSetSSuffix" value="__s">
+              </div>
+            </div>
+            <div class="naming-preview">
+              <span class="naming-preview-label">Preview:</span>
+              <code>&lt;g id="<span id="uploadPreviewGId">iconNameCrmZCI</span>"&gt;</code>
+              <span class="naming-arrow">&rarr;</span>
+              <code>&lt;symbol id="<span id="uploadPreviewSymId">zcicn-iconname__s</span>"&gt;</code>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <h4>Usage Tag Format</h4>
+            <div class="tag-config-layout">
+              <div class="tag-preview-panel">
+                <span class="tag-preview-label">Generated Tag</span>
+                <div class="tag-preview-box">
+                  <code id="uploadPreviewTag">&lt;crmutil-icon icon-name="iconname" icon-class="zcicn-iconname__s"&gt;&lt;/crmutil-icon&gt;</code>
+                </div>
+                <span class="tag-preview-hint">Updates live as you edit &rarr;</span>
+              </div>
+              <div class="tag-config-panel">
+                <div class="tag-config-fields">
+                  <div class="form-group">
+                    <label for="uploadSetTagName">Tag Name</label>
+                    <input type="text" id="uploadSetTagName" value="crmutil-icon" placeholder="e.g. crmutil-icon">
+                  </div>
+                  <div class="form-group">
+                    <label for="uploadSetNameAttr">Name Attribute</label>
+                    <input type="text" id="uploadSetNameAttr" value="icon-name" placeholder="e.g. icon-name">
+                  </div>
+                  <div class="form-group">
+                    <label for="uploadSetClassAttr">Class Attribute</label>
+                    <input type="text" id="uploadSetClassAttr" value="icon-class" placeholder="e.g. icon-class">
+                  </div>
+                  <div class="form-group">
+                    <label for="uploadSetExtraClass">Extra CSS Classes <small>(space-separated)</small></label>
+                    <input type="text" id="uploadSetExtraClass" value="" placeholder="e.g. zcicn_black">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="multiUploadDoneBtn">Done</button>
+      <button class="btn btn-primary" id="multiUploadGenerateBtn">Generate Sprite</button>
+    </div>
+  </div>
+</div>

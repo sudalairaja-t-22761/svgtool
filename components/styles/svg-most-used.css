@@ -1,0 +1,98 @@
+/* ─── Most Used Icons Page ─── */
+
+.most-used-table {
+  padding: 0;
+}
+
+.most-used-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-light);
+  transition: background var(--transition);
+}
+
+.most-used-row:last-child {
+  border-bottom: none;
+}
+
+.most-used-row:hover {
+  background: var(--bg-hover);
+}
+
+.most-used-row-rank {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  min-width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.most-used-row-rank.top-3 {
+  color: var(--accent);
+}
+
+.most-used-row-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.most-used-row-bar-wrap {
+  flex: 0 0 140px;
+  height: 6px;
+  background: var(--bg-hover);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.most-used-row-bar {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.most-used-row-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.most-used-table .most-used-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.most-used-request {
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--bg-panel);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.most-used-request-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+#requestIconScreenshot {
+  font-size: 12px;
+  color: var(--text-secondary);
+}

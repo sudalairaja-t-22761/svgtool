@@ -1,0 +1,289 @@
+/* ============================================================
+   ICON LIST
+   ============================================================ */
+.icon-list {
+  min-height: 50px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+/* Two-column layout */
+.icon-list-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 50px;
+}
+
+.icon-list-column {
+  border-right: 1px solid var(--border-light);
+  overflow-y: auto;
+  max-height: 520px;
+}
+
+.icon-list-column:last-child {
+  border-right: none;
+}
+
+.icon-column-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.icon-list-column-new .icon-column-header {
+  color: var(--success);
+}
+
+.icon-list-column-existing .icon-column-header {
+  color: var(--warning);
+}
+
+.icon-column-count {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 20px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  gap: 4px;
+}
+
+.empty-state-icon {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-hover);
+  border-radius: 50%;
+  margin-bottom: 4px;
+  color: var(--text-tertiary);
+}
+
+.icon-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border-light);
+  transition: background var(--transition);
+  animation: fadeSlideIn 0.12s ease;
+}
+
+.icon-card:last-child { border-bottom: none; }
+
+.icon-card:hover {
+  background: var(--bg-hover);
+}
+
+.icon-card:first-child {
+  border-top-left-radius: var(--radius-xs);
+  border-top-right-radius: var(--radius-xs);
+}
+
+.icon-card.dragging {
+  opacity: 0.35;
+}
+
+.icon-card.drag-over {
+  background: var(--accent-subtle);
+  box-shadow: inset 0 2px 0 0 var(--accent);
+}
+
+.icon-card-drag {
+  cursor: grab;
+  color: var(--text-tertiary);
+  font-size: 14px;
+  padding: 4px;
+  user-select: none;
+  flex-shrink: 0;
+  line-height: 1;
+  opacity: 0.5;
+  transition: opacity var(--transition);
+}
+
+.icon-card:hover .icon-card-drag { opacity: 1; }
+.icon-card-drag:active { cursor: grabbing; }
+
+.icon-card-preview {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xs);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.icon-card-preview svg {
+  max-width: 24px;
+  max-height: 24px;
+}
+
+.icon-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.icon-name-input {
+  width: 100%;
+  max-width: 260px;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-xs);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  background: transparent;
+  transition: all var(--transition);
+}
+
+.icon-name-input:hover {
+  border-color: var(--border);
+  background: var(--bg-input);
+}
+
+.icon-name-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: var(--bg-input);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+.icon-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+
+.icon-dims {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+.badge-existing {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.badge-new {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.icon-ids {
+  display: flex;
+  gap: 6px;
+}
+
+.icon-id-tag {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  background: var(--bg-hover);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border: 1px solid var(--border-light);
+}
+
+.icon-card-delete {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  transition: all var(--transition);
+  line-height: 1;
+  opacity: 0;
+}
+
+.icon-card:hover .icon-card-delete { opacity: 1; }
+
+.icon-card-delete:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* ============================================================
+   ICON USAGE TAG (in icon cards)
+   ============================================================ */
+.icon-usage-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  max-width: 420px;
+}
+
+.icon-usage-tag code {
+  flex: 1;
+  min-width: 0;
+  padding: 3px 8px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xs);
+  font-size: 10.5px;
+  font-family: var(--font-mono);
+  color: var(--accent-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+}
+
+.icon-usage-copy {
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: var(--bg-panel);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.icon-usage-copy:hover {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}

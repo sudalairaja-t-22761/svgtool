@@ -1,0 +1,38 @@
+<div class="modal-overlay hidden" id="filenameModal">
+  <div class="modal-overlay-bg"></div>
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Sprite &amp; CSS Name
+      </h3>
+      <button class="modal-close" id="fnameCloseBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" id="fnameSpriteGroup">
+        <label for="fnameSprite">Sprite file name (without extension)</label>
+        <input type="text" id="fnameSprite" value="sprite" class="form-input" placeholder="e.g. my-icons" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="form-group" id="fnameCssGroup" style="margin-top:12px;">
+        <label for="fnameCss">CSS file name (without extension)</label>
+        <input type="text" id="fnameCss" value="sprite" class="form-input" placeholder="e.g. my-icons" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="form-group hidden" id="fnameFolderGroup" style="margin-top:12px;">
+        <label for="fnameFolder">Folder name</label>
+        <input type="text" id="fnameFolder" value="sprite-icons" class="form-input" placeholder="e.g. my-sprite-folder" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="fnameCancel">Cancel</button>
+      <button class="btn btn-primary" id="fnameConfirm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Continue
+      </button>
+    </div>
+  </div>
+</div>

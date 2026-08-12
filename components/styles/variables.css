@@ -1,0 +1,113 @@
+/* ============================================================
+   SVG SpriteForge - Theme Variables
+   Zoho CRM Inspired Design Tokens
+   ============================================================ */
+
+/* ---------- LIGHT THEME TOKENS ---------- */
+:root,
+[data-theme="light"] {
+  --accent:          #2C83EC;
+  --accent-hover:    #2472D3;
+  --accent-subtle:   #EBF3FE;
+  --accent-text:     #2C83EC;
+  --accent-glow:     rgba(44,131,236,0.12);
+
+  --cta:             #E42527;
+  --cta-hover:       #C91F21;
+  --cta-subtle:      #FDEAEA;
+
+  --bg-body:         #F3F4F6;
+  --bg-sidebar:      #223458;
+  --bg-sidebar-hover:#2B3F66;
+  --bg-sidebar-active:rgba(255,255,255,0.10);
+  --bg-panel:        #FFFFFF;
+  --bg-input:        #FFFFFF;
+  --bg-hover:        #F7F8FA;
+  --bg-active:       #EBF3FE;
+  --bg-code:         #1E2A3A;
+  --bg-elevated:     #FFFFFF;
+
+  --text-primary:    #1A202C;
+  --text-secondary:  #4A5568;
+  --text-tertiary:   #8895A7;
+  --text-on-accent:  #FFFFFF;
+  --text-on-sidebar: #C2CBDE;
+  --text-on-sidebar-hover: #FFFFFF;
+  --text-sidebar-label: #637899;
+  --text-code:       #CBD5E1;
+
+  --border:          #D5DAE1;
+  --border-light:    #E8ECF1;
+  --border-focus:    #2C83EC;
+
+  --shadow-xs:       0 1px 2px rgba(0,0,0,0.05);
+  --shadow-sm:       0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:       0 2px 8px rgba(0,0,0,0.10);
+  --shadow-lg:       0 8px 32px rgba(0,0,0,0.14);
+  --shadow-card:     0 1px 2px rgba(0,0,0,0.06);
+
+  --success:         #0D904F;
+  --success-bg:      #E6F4EA;
+  --danger:          #D93025;
+  --danger-bg:       #FCE8E6;
+  --warning:         #E37400;
+  --warning-bg:      #FEF7E0;
+
+  --sidebar-w:       230px;
+  --topbar-h:        48px;
+  --radius:          4px;
+  --radius-sm:       3px;
+  --radius-xs:       3px;
+  --transition:      0.12s ease;
+  --font-mono:       'SF Mono', Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* ---------- DARK THEME TOKENS ---------- */
+[data-theme="dark"] {
+  --accent:          #6BA3F5;
+  --accent-hover:    #8BB9FF;
+  --accent-subtle:   rgba(107,163,245,0.10);
+  --accent-text:     #6BA3F5;
+  --accent-glow:     rgba(107,163,245,0.10);
+
+  --cta:             #E86365;
+  --cta-hover:       #F07577;
+  --cta-subtle:      rgba(232,99,101,0.10);
+
+  --bg-body:         #0E1219;
+  --bg-sidebar:      #1E1F22;
+  --bg-sidebar-hover:#2A2B2F;
+  --bg-sidebar-active:rgba(107,163,245,0.10);
+  --bg-panel:        #161C27;
+  --bg-input:        #1C2330;
+  --bg-hover:        #1C2330;
+  --bg-active:       rgba(107,163,245,0.10);
+  --bg-code:         #0A0F17;
+  --bg-elevated:     #1A2030;
+
+  --text-primary:    #E2E6EC;
+  --text-secondary:  #8E99A8;
+  --text-tertiary:   #596373;
+  --text-on-accent:  #0E1219;
+  --text-on-sidebar: #A7ACB7;
+  --text-on-sidebar-hover: #D3D6DE;
+  --text-sidebar-label: #5A5E68;
+  --text-code:       #C9D1D9;
+
+  --border:          #232C3B;
+  --border-light:    #1A2231;
+  --border-focus:    #6BA3F5;
+
+  --shadow-xs:       0 1px 2px rgba(0,0,0,0.30);
+  --shadow-sm:       0 1px 3px rgba(0,0,0,0.35);
+  --shadow-md:       0 2px 8px rgba(0,0,0,0.40);
+  --shadow-lg:       0 8px 32px rgba(0,0,0,0.50);
+  --shadow-card:     0 1px 2px rgba(0,0,0,0.30);
+
+  --success:         #34D399;
+  --success-bg:      rgba(52,211,153,0.10);
+  --danger:          #F87171;
+  --danger-bg:       rgba(248,113,113,0.10);
+  --warning:         #FBBF24;
+  --warning-bg:      rgba(251,191,36,0.10);
+}

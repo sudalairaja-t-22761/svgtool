@@ -1,0 +1,72 @@
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Custom element wrappers are layout-transparent */
+svg-sidebar, svg-topbar, svg-upload-existing, svg-upload-icons,
+svg-icon-list, svg-code-output, svg-helpdoc, svg-icon-library,
+svg-settings-modal, svg-figma-modal, svg-filename-modal, svg-toast,
+svg-most-used, svg-duplicate-modal, svg-css-preference-modal, svg-webfont { display: contents; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Lato', sans-serif;
+  background: var(--bg-body);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-size: 13px;
+}
+
+.hidden { display: none !important; }
+
+::selection {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+
+/* Smooth focus ring for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* Checkbox Label Styling */
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkbox-label:hover input[type="checkbox"] {
+  opacity: 0.8;
+}
+
+.checkbox-label input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Form Hint Text */
+.form-hint {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}

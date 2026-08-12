@@ -1,0 +1,189 @@
+/* ============================================================
+   DUPLICATE MODAL
+   ============================================================ */
+.dup-modal {
+  width: 520px;
+  position: relative;
+  z-index: 1;
+}
+
+.dup-modal .modal-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dup-message {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.dup-groups {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dup-group {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.dup-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-hover);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.dup-group-header .dup-header-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.dup-group-header .dup-count {
+  font-weight: 400;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.dup-group-items {
+  display: flex;
+  flex-direction: column;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.dup-group-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.dup-group-item:last-child {
+  border-bottom: none;
+}
+
+.dup-group-item:hover {
+  background: var(--bg-hover);
+}
+
+.dup-group-item.unchecked {
+  opacity: 0.45;
+}
+
+.dup-group-item input[type="checkbox"] {
+  flex-shrink: 0;
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.dup-icon-preview {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-body);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xs);
+  padding: 3px;
+}
+
+.dup-icon-preview svg {
+  width: 100%;
+  height: 100%;
+}
+
+.dup-icon-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dup-icon-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dup-icon-meta {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.dup-icon-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.dup-icon-badge.badge-existing {
+  background: var(--badge-existing-bg, #fef3c7);
+  color: var(--badge-existing-text, #92400e);
+}
+
+.dup-icon-badge.badge-new {
+  background: var(--badge-new-bg, #d1fae5);
+  color: var(--badge-new-text, #065f46);
+}
+
+.modal-header h3 svg.dup-warn-icon {
+  color: var(--warning, #e8a317);
+  stroke: var(--warning, #e8a317);
+}
+
+/* Duplicate type badges in group headers */
+.dup-type-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  margin-left: 6px;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.dup-type-name {
+  background: var(--badge-existing-bg, #fef3c7);
+  color: var(--badge-existing-text, #92400e);
+}
+
+.dup-type-visual {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+/* Visual-group header icon color */
+.dup-group-visual .dup-group-header svg {
+  color: #7c3aed;
+  stroke: #7c3aed;
+}

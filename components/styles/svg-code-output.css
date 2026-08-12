@@ -1,0 +1,84 @@
+/* ============================================================
+   CODE OUTPUT
+   ============================================================ */
+.code-tabs {
+  display: flex;
+  gap: 0;
+}
+
+.code-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+
+.code-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.code-tab.active {
+  color: var(--accent-text);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.code-tab.active svg { stroke: var(--accent-text); }
+
+.code-wrapper {
+  max-height: 380px;
+  overflow: auto;
+}
+
+.code-block {
+  margin: 0;
+  padding: 16px;
+  background: var(--bg-code);
+  color: var(--text-code);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.65;
+  white-space: pre;
+  overflow-x: auto;
+  tab-size: 2;
+  min-height: 100px;
+}
+
+/* ============================================================
+   SPRITE PREVIEW
+   ============================================================ */
+.sprite-preview-wrapper {
+  overflow: auto;
+  max-height: 280px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  background: repeating-conic-gradient(var(--bg-hover) 0% 25%, var(--bg-panel) 0% 50%) 50% / 16px 16px;
+}
+
+.sprite-preview svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ============================================================
+   DOWNLOAD BAR
+   ============================================================ */
+.download-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 16px 0 0;
+  margin-bottom: 12px;
+}

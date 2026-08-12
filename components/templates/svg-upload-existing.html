@@ -1,0 +1,51 @@
+<div id="existingSection" class="panel hidden">
+  <div class="panel-header">
+    <h3 class="panel-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      Load Existing Sprite
+      <span class="panel-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </h3>
+  </div>
+  <div class="panel-body">
+    <div class="upload-row">
+      <div class="upload-box" id="spriteDropZone">
+        <div class="upload-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+        <p class="upload-label">SVG Sprite File</p>
+        <p class="upload-hint">Drop your existing sprite or click to browse</p>
+        <div class="upload-features">
+          <span class="upload-feature"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> .svg format</span>
+          <span class="upload-feature"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Preserves icon positions</span>
+          <span class="upload-feature"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Detects existing icons</span>
+        </div>
+        <input type="file" accept=".svg" class="file-input">
+        <div class="upload-status" id="spriteStatus"></div>
+      </div>
+      <div class="upload-box" id="cssDropZone">
+        <div class="upload-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </div>
+        <p class="upload-label">CSS / LESS File</p>
+        <p class="upload-hint">Drop your stylesheet or click to browse</p>
+        <div class="upload-features">
+          <span class="upload-feature"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> .css or .less format</span>
+          <span class="upload-feature"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Maps icon names &amp; positions</span>
+          <span class="upload-feature"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Optional — enhances output</span>
+        </div>
+        <input type="file" accept=".css" class="file-input">
+        <div class="upload-status" id="cssStatus"></div>
+      </div>
+    </div>
+  </div>
+</div>

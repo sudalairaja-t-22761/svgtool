@@ -1,0 +1,546 @@
+/* ─── SVG to WebFont Page ─── */
+
+#webfontPage {
+  padding: 0;
+}
+
+/* Page header — matches panel-header theme, adapts to light/dark */
+.wf-header {
+  background:
+    radial-gradient(circle at 95% 50%, var(--accent-subtle) 0%, transparent 50%),
+    linear-gradient(135deg, var(--bg-hover) 0%, var(--bg-panel) 100%);
+  border-left: 3px solid var(--accent);
+  border-bottom: 1px solid var(--border-light);
+  padding: 14px 20px;
+}
+
+.wf-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wf-header-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--accent-subtle);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.wf-header h2 {
+  margin: 0 0 3px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.wf-header p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Mode tabs */
+.wf-mode-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.wf-mode-btn {
+  flex: 1;
+  padding: 9px 14px;
+  border: 2px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-secondary);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-family: inherit;
+}
+
+.wf-mode-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.wf-mode-btn.active {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Disable click-to-browse (label) once files are loaded */
+.wf-dropzone.has-files #wfDzLabel {
+  display: none !important;
+}
+
+/* Drop zone */
+.wf-dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  background: var(--bg-hover);
+  padding: 32px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  margin-bottom: 16px;
+}
+
+.wf-dropzone:hover,
+.wf-dropzone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.wf-dropzone.has-files {
+  padding: 14px 20px;
+  border-style: solid;
+  border-color: var(--success);
+  background: var(--success-bg);
+  cursor: default;
+}
+
+.wf-dz-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 10px;
+  color: var(--text-tertiary);
+  display: block;
+}
+
+.wf-dz-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+
+.wf-dz-sub {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.wf-drop-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wf-drop-count {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--success);
+}
+
+/* Config row */
+.wf-config-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.wf-config-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.wf-config-field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.wf-config-field input {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color var(--transition);
+  font-family: inherit;
+}
+
+.wf-config-field input:focus {
+  border-color: var(--border-focus);
+}
+
+.wf-badges {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  padding-bottom: 1px;
+}
+
+.wf-badge {
+  padding: 3px 8px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: .04em;
+}
+
+/* Generate button */
+.wf-gen-btn {
+  padding: 8px 16px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: opacity var(--transition);
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.wf-gen-btn:disabled { opacity: .4; cursor: not-allowed; }
+.wf-gen-btn:not(:disabled):hover { opacity: .87; }
+
+.wf-spinner {
+  display: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: wf-spin .65s linear infinite;
+  flex-shrink: 0;
+}
+
+.wf-gen-btn.loading .wf-spinner { display: block; }
+.wf-gen-btn.loading .wf-btn-icon { display: none; }
+
+@keyframes wf-spin { to { transform: rotate(360deg); } }
+
+/* Section titles */
+.wf-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Icon grids */
+.wf-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.wf-icon-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 14px 8px 10px;
+  text-align: center;
+  cursor: default;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  overflow: hidden;
+}
+
+.wf-icon-card[data-wfclass] { cursor: pointer; }
+
+.wf-icon-card[data-wfclass]:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.wf-icon-card[data-wfclass]:active { transform: translateY(0); }
+
+.wf-icon-card-preview {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+/* SVG image previews: force white tile so dark-mode icons are always visible */
+#wfPreviewGrid .wf-icon-card-preview {
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  padding: 3px;
+}
+
+#wfPreviewGrid .wf-icon-card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Font icon previews: theme-aware, colour follows --text-primary */
+#wfFontGrid .wf-icon-card-preview {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-light);
+}
+
+#wfFontGrid .wf-icon-card-preview i {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.wf-icon-card-name {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+/* Result section */
+.wf-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.wf-result-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wf-result-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--success);
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  border-radius: 100px;
+  padding: 2px 9px;
+  opacity: .9;
+}
+
+/* Download row */
+.wf-dl-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+.wf-dl-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-secondary);
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: .04em;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+  font-family: inherit;
+}
+
+.wf-dl-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.wf-dl-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+.wf-dl-zip-btn {
+  padding: 7px 14px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity var(--transition);
+  font-family: inherit;
+}
+
+.wf-dl-zip-btn:hover { opacity: .87; }
+
+.wf-snippet-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-secondary);
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+  font-family: inherit;
+}
+
+.wf-snippet-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+/* Generated CSS code block */
+.wf-css-block {
+  background: var(--bg-code);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-code);
+  overflow-x: auto;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre;
+  margin-top: 10px;
+}
+
+/* Sprite-parsing state inside drop zone */
+.wf-dz-parsing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.wf-dz-parse-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: wf-spin .7s linear infinite;
+  margin-bottom: 2px;
+}
+
+/* Generation loading bar */
+.wf-loading-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--accent-subtle);
+  border: 1px solid var(--accent);
+  border-radius: 7px;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.wf-lb-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: wf-spin .65s linear infinite;
+  flex-shrink: 0;
+}
+
+.wf-lb-label {
+  flex: 1;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.wf-lb-timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 34px;
+  text-align: right;
+}
+
+/* Error bar */
+.wf-error {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: var(--danger);
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+
+/* Toast — uses sidebar bg so it contrasts on both light and dark themes */
+.wf-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--bg-sidebar);
+  color: var(--text-on-sidebar-hover);
+  padding: 9px 18px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: transform .2s ease;
+  pointer-events: none;
+  z-index: 9999;
+  white-space: nowrap;
+  box-shadow: var(--shadow-lg);
+}
+
+.wf-toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .wf-config-row { flex-direction: column; align-items: stretch; }
+  .wf-dl-row { gap: 6px; }
+  .wf-dl-btn { font-size: 10px; padding: 5px 9px; }
+}

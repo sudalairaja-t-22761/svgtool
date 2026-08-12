@@ -1,0 +1,32 @@
+/* ============================================================
+   MAIN LAYOUT
+   ============================================================ */
+.main {
+  flex: 1;
+  margin-left: var(--sidebar-w);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.25s ease;
+}
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+.content {
+  flex: 1;
+  padding: 20px;
+  max-width: 1080px;
+  width: 100%;
+}
+
+/* Let the Help Doc page use full width for its sidebar layout */
+#helpDocPage.content {
+  max-width: 100%;
+}
+
+/* WebFont page: full width, no outer padding (header + panel handle their own spacing) */
+#webfontPage.content {
+  max-width: 100%;
+  padding: 0;
+}

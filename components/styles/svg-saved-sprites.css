@@ -1,0 +1,235 @@
+/* ============================================================
+   SAVED SPRITES PAGE
+   ============================================================ */
+.saved-folders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.saved-folder-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 16px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  position: relative;
+}
+
+.saved-folder-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.saved-folder-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.saved-folder-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.saved-folder-icon svg {
+  stroke: var(--accent);
+}
+
+.saved-folder-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.saved-folder-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-bottom: 14px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background: repeating-conic-gradient(var(--bg-hover) 0% 25%, var(--bg-panel) 0% 50%) 50%/12px 12px;
+}
+
+.saved-folder-preview img,
+.saved-folder-preview svg {
+  max-width: none;
+  max-height: none;
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+.saved-folder-files {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.saved-file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--bg-hover);
+  border-radius: var(--radius-xs);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.saved-file-item svg {
+  flex-shrink: 0;
+  stroke: var(--text-tertiary);
+}
+
+.saved-file-name {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.saved-file-size {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.saved-folder-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.saved-folder-actions .btn {
+  flex: 1 1 calc(50% - 4px);
+  font-size: 11px;
+  padding: 5px 8px;
+  min-width: 0;
+}
+
+.saved-folder-actions .btn[data-tooltip] {
+  position: relative;
+}
+
+.saved-folder-actions .btn[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%) translateY(2px);
+  background: rgba(20, 22, 28, 0.95);
+  color: #fff;
+  padding: 4px 7px;
+  border-radius: 6px;
+  font-size: 10px;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  z-index: 6;
+}
+
+.saved-folder-actions .btn[data-tooltip]:hover::after,
+.saved-folder-actions .btn[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Adjust button layout for Icon Library small tiles */
+.lib-grid-small .saved-folder-actions .btn {
+  flex: 1 1 calc(50% - 4px);
+  padding: 4px 6px;
+  font-size: 10px;
+}
+
+/* Adjust button layout for Icon Library medium tiles */
+.lib-grid-medium .saved-folder-actions .btn {
+  flex: 1;
+  padding: 5px 8px;
+  font-size: 11px;
+}
+
+/* Adjust button layout for Icon Library large tiles */
+.lib-grid-large .saved-folder-actions .btn {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.lib-folder-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  background: repeating-conic-gradient(var(--bg-hover) 0% 25%, var(--bg-panel) 0% 50%) 50%/12px 12px;
+}
+
+.lib-folder-thumb {
+  height: 54px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  overflow: hidden;
+}
+
+.lib-folder-thumb img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+.saved-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-tertiary);
+}
+
+.saved-empty p {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.saved-file-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.saved-file-badge.svg-badge {
+  background: var(--accent-subtle);
+  color: var(--accent-text);
+}
+
+.saved-file-badge.css-badge {
+  background: var(--success-bg);
+  color: var(--success);
+}

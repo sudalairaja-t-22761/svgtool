@@ -1,0 +1,119 @@
+<div id="outputSection" class="hidden">
+  <!-- Preview -->
+  <div class="panel">
+    <div class="panel-header">
+      <h3 class="panel-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+        </svg>
+        Sprite Preview
+        <span class="panel-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div class="sprite-preview-wrapper">
+        <div id="spritePreview" class="sprite-preview"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Code Output -->
+  <div class="panel">
+    <div class="panel-header panel-header-tabs">
+      <div class="code-tabs">
+        <button class="code-tab active" data-out="svg">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+          </svg>
+          SVG
+        </button>
+        <button class="code-tab" data-out="css">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 2h10l6 6v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+            <path d="M8 13h2l2-3 2 3h2"/><path d="M14 2v6h6"/>
+          </svg>
+          CSS
+        </button>
+      </div>
+      <div class="panel-actions">
+        <button class="btn btn-ghost btn-sm" id="copySvgBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy
+        </button>
+        <button class="btn btn-ghost btn-sm hidden" id="copyCssBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy
+        </button>
+      </div>
+    </div>
+    <div class="panel-body panel-body-flush">
+      <div id="svgoStatsBar" class="svgo-stats-bar hidden"></div>
+      <div style="display:flex; gap:0;">
+        <div class="code-wrapper" style="flex:1; min-width:0;">
+          <pre id="svgCode" class="code-block"></pre>
+          <pre id="cssCode" class="code-block hidden"></pre>
+        </div>
+        <div id="spriteUrlSection" style="display:none; width:320px; border-left:1px solid var(--border); padding:12px; flex-shrink:0; overflow:auto;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+            <strong style="font-size:13px;">Sprite URL</strong>
+          </div>
+          <input type="text" id="spriteUrlInput" readonly style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:6px; background:var(--bg-secondary); color:var(--text); font-size:12px; font-family:monospace; box-sizing:border-box;" />
+          <button class="btn btn-ghost btn-sm" id="copyUrlBtn" title="Copy URL" style="margin-top:8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy URL
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download Bar -->
+  <div class="download-bar">
+    <button class="btn btn-primary" id="downloadSvgBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Download SVG
+    </button>
+    <button class="btn btn-primary" id="downloadCssBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Download CSS
+    </button>
+    <button class="btn btn-primary" id="saveToProjectBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+        <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+      </svg>
+      Save to Project
+    </button>
+    <button class="btn btn-primary" id="downloadFolderBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        <line x1="12" y1="11" x2="12" y2="17"/><polyline points="9 14 12 17 15 14"/>
+      </svg>
+      Download as Folder
+    </button>
+    <button class="btn btn-primary" id="retrieveBtn" onclick="retrieveImages()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/>
+        <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/>
+      </svg>
+      Retrieve
+    </button>
+  </div>
+</div>

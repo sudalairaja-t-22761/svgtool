@@ -1,0 +1,35 @@
+<div class="modal-overlay hidden" id="uploadIconModal">
+  <div class="modal-overlay-bg"></div>
+  <div class="modal">
+    <div class="modal-header">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Upload Icon
+      </h3>
+      <button class="modal-close" id="uploadIconCloseBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-group">
+        <div class="form-group">
+          <label for="uploadIconName">Icon name</label>
+          <input type="text" id="uploadIconName" class="form-input" placeholder="e.g. settings-outline" autocomplete="off" spellcheck="false">
+        </div>
+        <p class="upload-hint" style="margin-top:12px;">After continuing, choose one or more SVG files. A single file goes to folder flow; multiple files open customise flow for sprite generation.</p>
+      </div>
+
+      <input type="file" id="uploadIconFileInput" accept=".svg,image/svg+xml" class="hidden">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="uploadIconCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="uploadIconConfirmBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Continue
+      </button>
+    </div>
+  </div>
+</div>

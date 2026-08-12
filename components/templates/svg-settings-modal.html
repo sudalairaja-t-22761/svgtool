@@ -1,0 +1,130 @@
+<div class="modal-overlay hidden" id="settingsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Sprite Settings
+      </h3>
+      <button class="modal-close" id="closeSettingsBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-group">
+        <h4>Layout</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="setSpacing">Horizontal Spacing (px)</label>
+            <input type="number" id="setSpacing" value="7" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label for="setRowGap">Row Gap (px)</label>
+            <input type="number" id="setRowGap" value="5" min="0" max="100">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="setPadding">Padding (px)</label>
+            <input type="number" id="setPadding" value="5" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label for="setIconsPerRow">Icons Per Row <small>(0 = unlimited)</small></label>
+            <input type="number" id="setIconsPerRow" value="0" min="0" max="100">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="setMaxSpriteWidth">Max Sprite Width (px) <small>(0 = auto)</small></label>
+            <input type="number" id="setMaxSpriteWidth" value="0" min="0" max="10000">
+          </div>
+        </div>
+      </div>
+      <div class="settings-group">
+        <h4>Naming Convention</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="setGSuffix">G Element ID Suffix</label>
+            <input type="text" id="setGSuffix" value="CrmZCI">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="setPrefix">Symbol / CSS Prefix</label>
+            <input type="text" id="setPrefix" value="zcicn-">
+          </div>
+          <div class="form-group">
+            <label for="setSSuffix">Symbol / CSS Suffix</label>
+            <input type="text" id="setSSuffix" value="__s">
+          </div>
+        </div>
+        <div class="naming-preview">
+          <span class="naming-preview-label">Preview:</span>
+          <code>&lt;g id="<span id="previewGId">iconNameCrmZCI</span>"&gt;</code>
+          <span class="naming-arrow">&rarr;</span>
+          <code>&lt;symbol id="<span id="previewSymId">zcicn-iconname__s</span>"&gt;</code>
+        </div>
+      </div>
+      <div class="settings-group">
+        <h4>Usage Tag Format</h4>
+        <div class="tag-config-layout">
+          <div class="tag-preview-panel">
+            <span class="tag-preview-label">Generated Tag</span>
+            <div class="tag-preview-box">
+              <code id="previewTag">&lt;crmutil-icon icon-name="iconname" icon-class="zcicn-iconname__s"&gt;&lt;/crmutil-icon&gt;</code>
+            </div>
+            <span class="tag-preview-hint">Updates live as you edit &rarr;</span>
+          </div>
+          <div class="tag-config-panel">
+            <div class="tag-config-fields">
+              <div class="form-group">
+                <label for="setTagName">Tag Name</label>
+                <input type="text" id="setTagName" value="crmutil-icon" placeholder="e.g. crmutil-icon">
+              </div>
+              <div class="form-group">
+                <label for="setNameAttr">Name Attribute</label>
+                <input type="text" id="setNameAttr" value="icon-name" placeholder="e.g. icon-name">
+              </div>
+              <div class="form-group">
+                <label for="setClassAttr">Class Attribute</label>
+                <input type="text" id="setClassAttr" value="icon-class" placeholder="e.g. icon-class">
+              </div>
+              <div class="form-group">
+                <label for="setExtraClass">Extra CSS Classes <small>(space-separated)</small></label>
+                <input type="text" id="setExtraClass" value="" placeholder="e.g. zcicn_black">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-group">
+        <h4>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          SVG Optimization (SVGO)
+        </h4>
+        <div class="svgo-toggle-row">
+          <label class="svgo-switch">
+            <input type="checkbox" id="svgoEnabled">
+            <span class="svgo-slider"></span>
+          </label>
+          <span class="svgo-toggle-label">Enable SVG optimization on generated output</span>
+        </div>
+        <div id="svgoPassList" class="svgo-pass-list">
+          <!-- Populated dynamically from SF.svgoPasses -->
+        </div>
+        <div class="form-row svgo-precision-row" id="svgoPrecisionRow">
+          <div class="form-group">
+            <label for="svgoFloatPrecision">Float Precision (decimal places)</label>
+            <input type="number" id="svgoFloatPrecision" value="3" min="0" max="8">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancelSettingsBtn">Cancel</button>
+      <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+    </div>
+  </div>
+</div>

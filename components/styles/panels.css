@@ -1,0 +1,177 @@
+/* ============================================================
+   PANELS (Cards) — Zoho CRM Flat Style
+   ============================================================ */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-light);
+  min-height: 42px;
+  background:
+    radial-gradient(circle at 95% 50%, var(--accent-subtle) 0%, transparent 50%),
+    linear-gradient(135deg, var(--bg-hover) 0%, var(--bg-panel) 100%);
+  border-left: 3px solid var(--accent);
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.panel-header:hover {
+  background:
+    radial-gradient(circle at 95% 50%, var(--accent-subtle) 0%, transparent 45%),
+    linear-gradient(135deg, var(--bg-active) 0%, var(--bg-hover) 100%);
+  border-left-color: var(--accent-hover);
+}
+
+.panel-header-tabs {
+  padding: 0 16px;
+  padding-top: 0;
+  cursor: default;
+}
+
+.panel-header-tabs:hover {
+  background: var(--bg-hover);
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.panel-title svg {
+  color: var(--accent-text);
+  stroke: var(--accent-text);
+  opacity: 0.8;
+}
+
+/* Accordion chevron */
+.panel-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-left: 4px;
+  color: var(--text-tertiary);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.panel.collapsed .panel-chevron {
+  transform: rotate(-90deg);
+}
+
+.panel-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 7px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: var(--text-on-accent);
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(44,131,236,0.25);
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Accordion body */
+.panel-body {
+  padding: 16px;
+  overflow-y: auto;
+  transition: max-height 0.25s ease, padding 0.25s ease, opacity 0.2s ease;
+  max-height: 50000px;
+  opacity: 1;
+}
+
+.panel.collapsed > .panel-body,
+.panel.collapsed > .panel-body-flush {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+}
+
+.panel.collapsed > .panel-header {
+  border-bottom-color: transparent;
+}
+
+.panel-body-flush {
+  padding: 0;
+  overflow-y: auto;
+  transition: max-height 0.25s ease, opacity 0.2s ease;
+  max-height: 50000px;
+  opacity: 1;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-xs);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.btn-primary {
+  background: transparent linear-gradient(0deg, #3954CC 0%, #5F7CFC 100%);
+  color: #FFFFFF;
+  border: none;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: transparent linear-gradient(0deg, #3148B5 0%, #5570E8 100%);
+  border: none;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 11px;
+}

@@ -1,0 +1,41 @@
+<div class="content hidden" id="mostUsedPage">
+  <div class="panel">
+    <div class="panel-header">
+      <h3 class="panel-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        Most Used Icons
+        <span class="panel-badge" id="mostUsedTotal">0</span>
+      </h3>
+      <div class="panel-actions">
+        <button class="btn btn-ghost btn-sm" id="clearUsageBtn" title="Clear all usage data">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+          Clear Data
+        </button>
+      </div>
+    </div>
+    <div class="panel-body-flush">
+      <div class="most-used-table" id="mostUsedTable">
+        <div class="most-used-empty">No usage data yet. Generate a sprite to start tracking icons.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="content hidden" id="requestIconPage">
+  <div class="panel">
+    <div class="panel-header">
+      <h3 class="panel-title">Request Icon</h3>
+    </div>
+    <div class="panel-body">
+      <div class="most-used-request">
+        <button class="btn btn-primary btn-sm" id="requestIconBtn" type="button">Request Icon</button>
+        <label class="most-used-request-label" for="requestIconScreenshot">Attach screenshot of the icon</label>
+        <input type="file" id="requestIconScreenshot" accept="image/*">
+      </div>
+    </div>
+  </div>
+</div>

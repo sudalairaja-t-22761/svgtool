@@ -1,0 +1,143 @@
+/* ============================================================
+   SIDEBAR — Zoho CRM Dark Navy Style
+   ============================================================ */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--bg-sidebar);
+  border-right: none;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: transform 0.25s ease;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  min-height: var(--topbar-h);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.sidebar-logo {
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent linear-gradient(0deg, #3954CC 0%, #5F7CFC 100%);
+  color: #FFFFFF;
+  border-radius: var(--radius-xs);
+}
+
+.sidebar-logo svg { stroke: #FFFFFF; }
+
+.sidebar-brand-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: -0.3px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 8px 8px;
+  overflow-y: auto;
+}
+
+.sidebar-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-sidebar-label);
+  padding: 16px 10px 5px;
+  text-transform: uppercase;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--text-on-sidebar);
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+  text-align: left;
+  margin-bottom: 1px;
+  position: relative;
+}
+
+.sidebar-link svg {
+  stroke: var(--text-on-sidebar);
+  opacity: 0.6;
+}
+
+.sidebar-link:hover {
+  background: var(--bg-sidebar-hover);
+  color: var(--text-on-sidebar-hover);
+}
+
+.sidebar-link:hover svg {
+  opacity: 0.9;
+}
+
+.sidebar-link.active {
+  background: var(--bg-sidebar-active);
+  color: var(--text-on-sidebar-hover);
+  font-weight: 500;
+}
+
+.sidebar-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: transparent linear-gradient(0deg, #3954CC 0%, #5F7CFC 100%);
+  border-radius: 0 2px 2px 0;
+}
+
+.sidebar-link.active svg {
+  stroke: var(--text-on-sidebar-hover);
+  opacity: 1;
+}
+
+.sidebar-footer {
+  padding: 10px 12px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Theme Toggle */
+.theme-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: background var(--transition);
+  user-select: none;
+}
+
+.theme-switch:hover {
+  background: var(--bg-sidebar-hover);
+}
+
+.theme-icon { color: var(--text-on-sidebar); opacity: 0.5; }
+
+[data-theme="light"] .theme-icon-dark { display: none; }
+[data-theme="dark"]  .theme-icon-light { display: none; }
+
+.theme-label {
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--text-on-sidebar);
+}

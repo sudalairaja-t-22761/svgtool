@@ -1,0 +1,179 @@
+<div class="content hidden" id="helpDocPage">
+  <!-- Toolbar -->
+  <div class="panel">
+    <div class="panel-header">
+      <h3 class="panel-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+        Icon Reference
+        <span class="panel-badge" id="docIconCount">0</span>
+      </h3>
+      <div class="panel-actions">
+        <button class="btn btn-ghost btn-sm" id="docCopyAllBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy All Tags
+        </button>
+        <button class="btn btn-ghost btn-sm" id="docDownloadHtmlBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export HTML
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two-column layout: main content -->
+  <div class="doc-layout">
+    <div class="doc-main">
+      <div class="doc-search-bar">
+        <div class="doc-control-group">
+          <label class="doc-control-label">Search</label>
+          <input type="text" class="doc-search-input" id="docSearch" placeholder="Filter icons...">
+        </div>
+      </div>
+      <div class="doc-grid" id="docGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Right Customise Panel (fixed, outside content flow) -->
+<aside class="doc-right-panel hidden" id="docRightPanel">
+  <div class="doc-right-panel-inner">
+    <h4 class="doc-right-panel-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      Customise
+    </h4>
+
+    <div class="doc-control-group">
+      <label class="doc-control-label">Preview Size</label>
+      <div class="doc-scale-wrap">
+        <input type="range" id="docScale" min="16" max="128" value="48" step="4" class="doc-scale-slider">
+        <span class="doc-scale-value" id="docScaleValue">48px</span>
+      </div>
+    </div>
+
+    <div class="doc-right-sep"></div>
+
+    <!-- Color Scope Toggle -->
+    <div class="doc-control-group doc-scope-group">
+      <label class="doc-control-label">Apply To</label>
+      <div class="doc-scope-btns">
+        <button class="doc-scope-btn active" data-scope="all">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          All Icons
+        </button>
+        <button class="doc-scope-btn" data-scope="selected">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+          Selected
+        </button>
+      </div>
+    </div>
+
+    <div class="doc-right-sep"></div>
+
+    <!-- Color Mode (always visible) -->
+    <div class="doc-control-group">
+      <label class="doc-control-label">Color Mode</label>
+      <div class="doc-color-mode-btns doc-color-mode-btns--vertical">
+        <button class="doc-mode-btn active" data-colormode="original">Original</button>
+        <button class="doc-mode-btn" data-colormode="single">Single</button>
+        <button class="doc-mode-btn" data-colormode="multi">Multi</button>
+      </div>
+    </div>
+
+    <!-- ALL ICONS scope options -->
+    <div id="docAllIconsSection">
+      <div class="doc-control-group doc-color-single hidden" id="docSingleColorGroup">
+        <label class="doc-control-label">Color</label>
+        <div class="doc-color-picker-wrap">
+          <input type="color" id="docSingleColor" value="#1B73E8" class="doc-color-input">
+          <input type="text" id="docSingleColorHex" value="#1B73E8" class="doc-color-hex" maxlength="7">
+        </div>
+      </div>
+      <div class="doc-control-group doc-color-multi hidden" id="docMultiColorGroup">
+        <label class="doc-control-label">Fill Color</label>
+        <div class="doc-color-picker-wrap">
+          <input type="color" id="docMultiFill" value="#1B73E8" class="doc-color-input">
+          <input type="text" id="docMultiFillHex" value="#1B73E8" class="doc-color-hex" maxlength="7">
+        </div>
+      </div>
+      <div class="doc-control-group doc-color-multi hidden" id="docMultiStrokeGroup">
+        <label class="doc-control-label">Stroke Color</label>
+        <div class="doc-color-picker-wrap">
+          <input type="color" id="docMultiStroke" value="#D93025" class="doc-color-input">
+          <input type="text" id="docMultiStrokeHex" value="#D93025" class="doc-color-hex" maxlength="7">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm doc-apply-all-btn" id="docApplyAllBtn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Apply to All Icons
+      </button>
+    </div>
+
+    <!-- SELECTED ICON scope -->
+    <div id="docSelectedSection" class="hidden">
+      <div class="doc-selected-info" id="docSelectedInfo">
+        <div class="doc-selected-empty">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Click an icon in the grid to select it</span>
+        </div>
+      </div>
+      <div class="doc-selected-controls hidden" id="docSelectedControls">
+        <div class="doc-selected-preview" id="docSelectedPreview"></div>
+        <div class="doc-selected-name" id="docSelectedName"></div>
+        <div class="doc-control-group">
+          <label class="doc-control-label">Fill Color</label>
+          <div class="doc-color-picker-wrap">
+            <input type="color" id="docIconFill" value="#000000" class="doc-color-input">
+            <input type="text" id="docIconFillHex" value="#000000" class="doc-color-hex" maxlength="7">
+            <button class="doc-color-reset" id="docIconFillReset" title="Reset to original">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="doc-control-group">
+          <label class="doc-control-label">Stroke Color</label>
+          <div class="doc-color-picker-wrap">
+            <input type="color" id="docIconStroke" value="#000000" class="doc-color-input">
+            <input type="text" id="docIconStrokeHex" value="#000000" class="doc-color-hex" maxlength="7">
+            <button class="doc-color-reset" id="docIconStrokeReset" title="Reset to original">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="docPathList" class="doc-path-list hidden"></div>
+      </div>
+    </div>
+
+    <div class="doc-right-sep"></div>
+
+    <div class="doc-control-group">
+      <label class="doc-control-label">Background</label>
+      <div class="doc-bg-btns">
+        <button class="doc-bg-btn active" data-bg="transparent" title="Transparent">
+          <span class="doc-bg-swatch doc-bg-checkers"></span>
+        </button>
+        <button class="doc-bg-btn" data-bg="#FFFFFF" title="White">
+          <span class="doc-bg-swatch" style="background:#FFF;border:1px solid #ddd"></span>
+        </button>
+        <button class="doc-bg-btn" data-bg="#1A1D21" title="Dark">
+          <span class="doc-bg-swatch" style="background:#1A1D21"></span>
+        </button>
+        <button class="doc-bg-btn" data-bg="#E8F0FE" title="Light Blue">
+          <span class="doc-bg-swatch" style="background:#E8F0FE"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</aside>

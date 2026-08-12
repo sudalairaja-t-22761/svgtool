@@ -1,0 +1,186 @@
+<div class="content hidden" id="webfontPage">
+
+  <!-- Page header — theme-aware -->
+  <div class="wf-header">
+    <div class="wf-header-inner">
+      <div class="wf-header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 7 4 4 20 4 20 7"/>
+          <line x1="9" y1="20" x2="15" y2="20"/>
+          <line x1="12" y1="4" x2="12" y2="20"/>
+        </svg>
+      </div>
+      <div>
+        <h2>SVG to WebFont</h2>
+        <p>Convert SVG icons to WOFF2, WOFF, TTF, EOT &amp; CSS icon font</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:0;border-top-left-radius:0;border-top-right-radius:0;margin-bottom:0;">
+    <div class="panel-body" style="padding:20px 20px 24px;">
+
+      <!-- Mode selector -->
+      <div class="wf-mode-row">
+        <button type="button" class="wf-mode-btn active" id="wfModeFiles">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+          </svg>
+          Individual SVGs
+        </button>
+        <button type="button" class="wf-mode-btn" id="wfModeSprite">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          SVG Sprite
+        </button>
+      </div>
+
+      <!-- Drop zone -->
+      <div id="wfDropZone" class="wf-dropzone">
+        <input type="file" id="wfFileInput" accept=".svg,image/svg+xml" multiple style="display:none">
+        <label for="wfFileInput" id="wfDzLabel" style="display:block;cursor:pointer;width:100%;padding:0;margin:0">
+          <div id="wfDzIdle">
+            <svg class="wf-dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <p class="wf-dz-text" id="wfDzText">Drop SVG files here or click to browse</p>
+            <span class="wf-dz-sub" id="wfDzSub">Supports multiple .svg files</span>
+          </div>
+        </label>
+        <div id="wfDzParsing" class="wf-dz-parsing" style="display:none">
+          <span class="wf-dz-parse-spinner"></span>
+          <p class="wf-dz-text">Parsing sprite…</p>
+          <span class="wf-dz-sub" id="wfDzParseCount">Reading SVG symbols</span>
+        </div>
+        <div id="wfDropStatus" class="wf-drop-status" style="display:none">
+          <span class="wf-drop-count">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span id="wfDropCountText">0 icons loaded</span>
+          </span>
+          <button type="button" class="btn btn-ghost btn-sm" id="wfClearBtn" style="line-height:1">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Error bar -->
+      <div id="wfError" class="wf-error" style="display:none"></div>
+
+      <!-- Generation loading bar -->
+      <div id="wfLoadingBar" class="wf-loading-bar" style="display:none">
+        <span class="wf-lb-spinner"></span>
+        <span class="wf-lb-label">Uploading &amp; generating…</span>
+        <span class="wf-lb-timer" id="wfLoadingTimer">0.0s</span>
+      </div>
+
+      <!-- Config row -->
+      <div class="wf-config-row">
+        <div class="wf-config-field">
+          <label for="wfFontName">Font Name</label>
+          <input type="text" id="wfFontName" value="iconfont" placeholder="iconfont" spellcheck="false" autocomplete="off">
+        </div>
+        <div class="wf-badges">
+          <span class="wf-badge">WOFF2</span>
+          <span class="wf-badge">WOFF</span>
+          <span class="wf-badge">TTF</span>
+          <span class="wf-badge">EOT</span>
+          <span class="wf-badge">CSS</span>
+        </div>
+        <button type="button" class="wf-gen-btn" id="wfGenerateBtn" disabled>
+          <svg class="wf-btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span class="wf-spinner"></span>
+          Generate &amp; Download
+        </button>
+      </div>
+
+      <!-- Pre-generation icon preview grid -->
+      <div id="wfPreviewSection" style="display:none">
+        <p class="wf-section-title">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+          </svg>
+          Icon Preview
+        </p>
+        <div id="wfPreviewGrid" class="wf-icon-grid"></div>
+      </div>
+
+      <!-- Post-generation result section -->
+      <div id="wfResultSection" style="display:none">
+
+        <div class="wf-result-header">
+          <span class="wf-result-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Generated Font
+            <span class="wf-result-badge" id="wfResultBadge">0 icons</span>
+          </span>
+          <button type="button" class="btn btn-ghost btn-sm" id="wfStartOverBtn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 1 0 .49-4"/>
+            </svg>
+            Start Over
+          </button>
+        </div>
+
+        <!-- Live font preview grid (click to copy class) -->
+        <p class="wf-section-title">Live Preview &mdash; click a card to copy class</p>
+        <div id="wfFontGrid" class="wf-icon-grid"></div>
+
+        <!-- Download buttons -->
+        <p class="wf-section-title" style="margin-top:4px">Download</p>
+        <div class="wf-dl-row">
+          <button type="button" class="wf-dl-btn" id="wfDlWoff2" disabled>WOFF2</button>
+          <button type="button" class="wf-dl-btn" id="wfDlWoff" disabled>WOFF</button>
+          <button type="button" class="wf-dl-btn" id="wfDlTtf" disabled>TTF</button>
+          <button type="button" class="wf-dl-btn" id="wfDlEot" disabled>EOT</button>
+          <button type="button" class="wf-dl-btn" id="wfDlSvgFont" disabled>SVG Font</button>
+          <button type="button" class="wf-dl-btn" id="wfDlCss">CSS</button>
+          <button type="button" class="wf-dl-zip-btn" id="wfDlZip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download All (.zip)
+          </button>
+        </div>
+        <div class="wf-dl-row">
+          <button type="button" class="wf-snippet-btn" id="wfCopySnippet">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+            Copy HTML Snippet
+          </button>
+        </div>
+
+        <!-- CSS preview -->
+        <p class="wf-section-title" style="margin-top:6px">Generated CSS</p>
+        <pre id="wfCssBlock" class="wf-css-block"></pre>
+
+      </div><!-- /wfResultSection -->
+
+    </div><!-- /panel-body -->
+  </div><!-- /panel -->
+
+  <!-- Toast notification -->
+  <div id="wfToast" class="wf-toast"></div>
+
+</div>

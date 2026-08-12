@@ -1,0 +1,85 @@
+<div class="content hidden" id="iconLibraryPage">
+  <!-- Upload bar -->
+  <div class="panel">
+    <div class="panel-header">
+      <h3 class="panel-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Add Icons To Library
+        <span class="panel-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div class="lib-toolbar lib-toolbar-actions" style="margin-bottom:12px;">
+        <button class="btn btn-primary" id="libUploadIconsBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Upload Icons
+        </button>
+      </div>
+      <div class="upload-box upload-box-main" id="libSpriteDropZone">
+        <div class="upload-icon upload-icon-lg">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+        <p class="upload-label">Use Upload Icons to add individual icons directly to Library</p>
+        <p class="upload-hint">Icons appear as separate items in the Library list below</p>
+        <input type="file" accept=".svg" class="file-input">
+        <div class="upload-status" id="libSpriteStatus"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Browse Icons -->
+  <div class="panel" id="libBrowseSection">
+    <div class="panel-header">
+      <h3 class="panel-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+        Library
+        <span class="panel-badge" id="libIconCount">0</span>
+        <span class="panel-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div class="lib-toolbar">
+        <input type="text" class="doc-search-input" id="libSearch" placeholder="Search icons...">
+        <div class="lib-size-selector">
+          <button class="lib-size-btn" data-size="small" title="Small tiles">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="4" height="4"/><rect x="9" y="3" width="4" height="4"/><rect x="15" y="3" width="4" height="4"/><rect x="3" y="9" width="4" height="4"/><rect x="9" y="9" width="4" height="4"/><rect x="15" y="9" width="4" height="4"/><rect x="3" y="15" width="4" height="4"/><rect x="9" y="15" width="4" height="4"/><rect x="15" y="15" width="4" height="4"/></svg>
+          </button>
+          <button class="lib-size-btn active" data-size="medium" title="Medium tiles">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="5"/><rect x="10" y="3" width="5" height="5"/><rect x="17" y="3" width="4" height="5"/><rect x="3" y="10" width="5" height="5"/><rect x="10" y="10" width="5" height="5"/><rect x="17" y="10" width="4" height="5"/></svg>
+          </button>
+          <button class="lib-size-btn" data-size="large" title="Large tiles">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="lib-toolbar lib-toolbar-select" id="libBulkActions">
+        <label class="lib-select-all-label">
+          <input type="checkbox" id="libSelectAllVisible">
+          <span>Select all visible</span>
+        </label>
+        <span class="panel-badge" id="libSelectedCount">0 selected</span>
+        <button class="btn btn-primary btn-sm" id="libAddSelectedBtn" type="button" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Selected to Sprite
+        </button>
+      </div>
+      <div class="lib-grid lib-grid-medium" id="libGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,70 @@
+class SvgCssPreferenceModal extends HTMLElement {
+  connectedCallback() {
+    // Load template directly
+    const html = `
+      <div class="modal-overlay hidden" id="cssPreferenceModal">
+        <div class="modal-overlay-bg"></div>
+        <div class="modal" style="max-width: 400px;">
+          <div class="modal-header">
+            <h3>CSS Generation</h3>
+            <button class="modal-close" id="cssPreferenceCloseBtn">×</button>
+          </div>
+          <div class="modal-body">
+            <div class="settings-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="generateCssCheckbox" checked>
+                <span>Generate CSS file for sprite</span>
+              </label>
+              <p class="form-hint" style="margin-top: 12px;">If unchecked, only the SVG sprite will be generated. You can manually create CSS later if needed.</p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" id="cssPreferenceConfirmBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    this.innerHTML = html;
+    this.setupEventListeners();
+  }
+
+  setupEventListeners() {
+    const confirmBtn = document.getElementById('cssPreferenceConfirmBtn');
+    const closeBtn = document.getElementById('cssPreferenceCloseBtn');
+    const modal = document.getElementById('cssPreferenceModal');
+    const checkbox = document.getElementById('generateCssCheckbox');
+
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', () => {
+        window.sfCssPreference = checkbox.checked;
+        modal.classList.add('hidden');
+        // Trigger the callback if set
+        if (window.sfCssPreferenceCallback) {
+          window.sfCssPreferenceCallback();
+        }
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+    }
+
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+        }
+      });
+    }
+  }
+}
+
+customElements.define('svg-css-preference-modal', SvgCssPreferenceModal);

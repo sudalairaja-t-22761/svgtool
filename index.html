@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Sprite Generator — Icon Manager</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="components/styles/variables.css?v=16">
+  <link rel="stylesheet" href="components/styles/base.css?v=16">
+  <link rel="stylesheet" href="components/styles/layout.css?v=16">
+  <link rel="stylesheet" href="components/styles/panels.css?v=16">
+  <link rel="stylesheet" href="components/styles/scrollbars.css?v=16">
+  <link rel="stylesheet" href="components/styles/responsive.css?v=16">
+  <!-- Component CSS -->
+  <link rel="stylesheet" href="components/styles/svg-sidebar.css?v=16">
+  <link rel="stylesheet" href="components/styles/svg-topbar.css?v=16">
+  <link rel="stylesheet" href="components/styles/svg-upload.css?v=21">
+  <link rel="stylesheet" href="components/styles/svg-icon-list.css?v=16">
+  <link rel="stylesheet" href="components/styles/svg-code-output.css?v=16">
+  <link rel="stylesheet" href="components/styles/svg-helpdoc.css?v=19">
+  <link rel="stylesheet" href="components/styles/svg-settings-modal.css?v=17">
+  <link rel="stylesheet" href="components/styles/svg-figma-modal.css?v=16">
+  <link rel="stylesheet" href="components/styles/svg-toast.css?v=16">
+  <link rel="stylesheet" href="components/styles/svg-most-used.css?v=16">
+  <link rel="stylesheet" href="components/styles/svg-duplicate-modal.css?v=16">
+  <link rel="stylesheet" href="components/styles/svg-saved-sprites.css?v=19">
+  <link rel="stylesheet" href="components/styles/svg-webfont.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <script>
+    (function () {
+      var protocol = String(window.location.protocol || '').toLowerCase();
+      var host = String(window.location.hostname || '').toLowerCase();
+      var port = String(window.location.port || '');
+      var isLocalLike = false;
+
+      if (protocol === 'file:' || !host) {
+        isLocalLike = true;
+      } else if (host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0') {
+        isLocalLike = true;
+      } else if (/\.local$/.test(host)) {
+        isLocalLike = true;
+      } else if (/^10\./.test(host) || /^192\.168\./.test(host) || /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)) {
+        isLocalLike = true;
+      } else if (port === '8080') {
+        // server.py local dev default
+        isLocalLike = true;
+      }
+
+      if (isLocalLike) {
+        window.SF_BACKEND_MODE = 'local';
+        window.SF_AUTH_ENABLED = false;
+      }
+    })();
+
+    window.SF_CATALYST_API_BASE = 'https://spriteforge-60068995555.development.catalystserverless.in/server/spriteForgeJoin/';
+    if (typeof window.SF_AUTH_ENABLED === 'undefined') {
+      window.SF_AUTH_ENABLED = true;
+    }
+    window.SF_AUTH_STORAGE_KEY = 'sf_session_id';
+  </script>
+
+  <!-- Web Components (template loaders) -->
+  <script src="components/javascript/svg-sidebar.js?v=18"></script>
+  <script src="components/javascript/svg-topbar.js?v=17"></script>
+  <script src="components/javascript/svg-upload.js?v=16"></script>
+  <script src="components/javascript/svg-icon-list.js?v=16"></script>
+  <script src="components/javascript/svg-code-output.js?v=17"></script>
+  <script src="components/javascript/svg-helpdoc.js?v=17"></script>
+  <script src="components/javascript/svg-settings-modal.js?v=16"></script>
+  <script src="components/javascript/svg-figma-modal.js?v=16"></script>
+  <script src="components/javascript/svg-filename-modal.js?v=16"></script>
+  <script src="components/javascript/svg-upload-icon-modal.js?v=19"></script>
+  <script src="components/javascript/svg-multi-upload-modal.js?v=2"></script>
+  <script src="components/javascript/svg-toast.js?v=16"></script>
+  <script src="components/javascript/svg-most-used.js?v=17"></script>
+  <script src="components/javascript/svg-duplicate-modal.js?v=16"></script>
+  <script src="components/javascript/svg-saved-sprites.js?v=16"></script>
+  <script src="components/javascript/svg-css-preference-modal.js?v=2"></script>
+  <script src="components/javascript/svg-webfont.js"></script>
+
+  <!-- ===== SIDEBAR ===== -->
+  <svg-sidebar></svg-sidebar>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+
+    <!-- Top Bar -->
+    <svg-topbar></svg-topbar>
+
+    <!-- Content -->
+    <div class="content">
+      <svg-upload-existing></svg-upload-existing>
+      <svg-upload-icons></svg-upload-icons>
+      <svg-code-output></svg-code-output>
+      <svg-icon-list></svg-icon-list>
+    </div><!-- /content -->
+
+    <!-- ===== HELP DOC PAGE ===== -->
+    <svg-helpdoc></svg-helpdoc>
+
+    <!-- ===== ICON LIBRARY PAGE ===== -->
+    <svg-icon-library></svg-icon-library>
+
+    <!-- ===== MOST USED ICONS PAGE ===== -->
+    <svg-most-used></svg-most-used>
+
+    <!-- ===== SAVED SPRITES PAGE ===== -->
+    <svg-saved-sprites></svg-saved-sprites>
+
+    <!-- ===== SVG TO WEBFONT PAGE ===== -->
+    <svg-webfont></svg-webfont>
+
+  </main>
+
+  <!-- ===== MODALS ===== -->
+  <svg-settings-modal></svg-settings-modal>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- JS Components (load order matters) -->
+  <script src="components/javascript/state.js?v=17"></script>
+  <script src="components/javascript/utils.js?v=16"></script>
+  <script src="components/javascript/svg-parser.js?v=16"></script>
+  <script src="components/javascript/layout.js?v=16"></script>
+  <script src="components/javascript/generator.js?v=17"></script>
+  <script src="components/javascript/svg-optimizer.js?v=16"></script>
+  <script src="components/javascript/clipboard.js?v=16"></script>
+  <script src="components/javascript/ui.js?v=18"></script>
+  <script src="components/javascript/file-handler.js?v=33"></script>
+  <script src="components/javascript/icon-library-data.js?v=16"></script>
+  <script src="components/javascript/icon-library.js?v=46"></script>
+  <script src="components/javascript/helpdoc.js?v=18"></script>
+  <script src="components/javascript/figma.js?v=16"></script>
+  <script src="components/javascript/app.js?v=59"></script>
+  <script src="components/javascript/webfont.js"></script>
+
+  <svg-figma-modal></svg-figma-modal>
+  <svg-filename-modal></svg-filename-modal>
+  <svg-upload-icon-modal></svg-upload-icon-modal>
+  <svg-multi-upload-modal></svg-multi-upload-modal>
+  <svg-duplicate-modal></svg-duplicate-modal>
+  <svg-css-preference-modal></svg-css-preference-modal>
+  <svg-toast></svg-toast>
+</body>
+</html>

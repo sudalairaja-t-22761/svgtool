@@ -1,0 +1,153 @@
+/* ============================================================
+   TOPBAR — Zoho CRM Clean Bar
+   ============================================================ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: var(--topbar-h);
+  padding: 0 24px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.topbar-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  border: none;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.topbar-hamburger:hover { background: var(--bg-hover); }
+
+.topbar-title { flex: 1; }
+
+.topbar-title h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.topbar-breadcrumb {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.topbar-auth {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 6px;
+}
+
+.topbar-auth-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #FDECC8;
+  color: #7A5411;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.topbar-auth-status.is-authenticated {
+  background: #DFF4E8;
+  color: #15693A;
+}
+
+.topbar-auth-btn {
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.topbar-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid var(--border-light);
+  background: var(--bg-hover);
+}
+
+.topbar-user-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar-user-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.topbar-user-email {
+  max-width: 180px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-required #generateBtn,
+.auth-required #saveToProjectBtn {
+  opacity: 0.6;
+}
+
+.btn-generate {
+  padding: 6px 18px !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  border-radius: var(--radius-xs) !important;
+  background: transparent linear-gradient(0deg, #3954CC 0%, #5F7CFC 100%) !important;
+  border: none !important;
+  color: #FFFFFF !important;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.btn-generate:hover {
+  background: transparent linear-gradient(0deg, #3148B5 0%, #5570E8 100%) !important;
+  border: none !important;
+  transform: none;
+  box-shadow: none !important;
+}
+
+@media (max-width: 900px) {
+  .topbar-auth-status {
+    display: none;
+  }
+
+  .topbar-user-email {
+    display: none;
+  }
+}
