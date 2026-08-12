@@ -98,6 +98,8 @@
       return;
     }
 
+    $('#svgDropZone').addClass('loading');
+
     svgFiles.forEach(function (file) {
       pending++;
       var reader = new FileReader();
@@ -124,6 +126,7 @@
 
         pending--;
         if (pending === 0) {
+          $('#svgDropZone').removeClass('loading');
           SF.renderIconList();
           if (typeof options.onComplete === 'function') {
             options.onComplete(addedIcons);
@@ -134,6 +137,7 @@
       reader.onerror = function () {
         pending--;
         if (pending === 0) {
+          $('#svgDropZone').removeClass('loading');
           SF.renderIconList();
           if (typeof options.onComplete === 'function') {
             options.onComplete(addedIcons);
@@ -153,8 +157,11 @@
     // Store the original filename (without extension) for update-mode downloads
     state.sourceSpriteName = file.name.replace(/\.svg$/i, '');
 
+    $('#spriteDropZone').addClass('loading');
+
     var reader = new FileReader();
     reader.onload = function (e) {
+      $('#spriteDropZone').removeClass('loading');
       var icons = SF.parseExistingSprite(e.target.result);
 
       if (icons.length > 0) {
