@@ -1,7 +1,0 @@
-{
-  "name": "svg-icon-tool-ai-comp",
-  "private": true,
-  "scripts": {
-    "backup": "node scripts/create-backup-zip.js"
-  }
-}

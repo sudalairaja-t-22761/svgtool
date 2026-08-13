@@ -1,0 +1,14 @@
+{
+  "id": "49699000000309001",
+  "project_name": "svgtool",
+  "platform_type": "node20",
+  "functions": {
+    "targets": [
+      "spriteForgeJoin"
+    ],
+    "source": "functions"
+  },
+  "client": {
+    "source": "client"
+  }
+}

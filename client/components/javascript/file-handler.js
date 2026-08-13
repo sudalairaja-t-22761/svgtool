@@ -6,22 +6,7 @@
   'use strict';
 
   var state = SF.state;
-  function _isLocalLikeHost() {
-    var protocol = String(window.location.protocol || '').toLowerCase();
-    var host = String(window.location.hostname || '').toLowerCase();
-    if (protocol === 'file:') return true;
-    if (!host) return true;
-    if (host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0') return true;
-    if (/\.local$/.test(host)) return true;
-    if (/^10\./.test(host)) return true;
-    if (/^192\.168\./.test(host)) return true;
-    if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)) return true;
-    return false;
-  }
-
-  var IS_LOCAL_HOST = _isLocalLikeHost();
-  var BACKEND_MODE = window.SF_BACKEND_MODE || (IS_LOCAL_HOST ? 'local' : 'catalyst');
-  var CATALYST_API_BASE = window.SF_CATALYST_API_BASE || 'https://spriteforge-60068995555.development.catalystserverless.in/server/spriteForgeJoin/';
+  var CATALYST_API_BASE = window.SF_CATALYST_API_BASE || '/server/spriteForgeJoin/';
   var AUTH_STORAGE_KEY = window.SF_AUTH_STORAGE_KEY || 'sf_session_id';
   var HOSTED_LIBRARY_PREFIX = '__library__';
   var _savedFoldersCache = [];
@@ -30,16 +15,12 @@
     return String(base || '').replace(/\/+$/, '') + '/' + String(path || '').replace(/^\/+/, '');
   }
 
-  function _isHostedMode() {
-    return BACKEND_MODE === 'catalyst' && !IS_LOCAL_HOST;
+  function _isAuthMissing() {
+    return !!window.SF_AUTH_ENABLED && !(state.auth && state.auth.isAuthenticated);
   }
 
-  function _isHostedAuthMissing() {
-    return _isHostedMode() && !!window.SF_AUTH_ENABLED && !(state.auth && state.auth.isAuthenticated);
-  }
-
-  function _hostedAuthHeaders() {
-    if (!_isHostedMode() || !window.SF_AUTH_ENABLED) return {};
+  function _authHeaders() {
+    if (!window.SF_AUTH_ENABLED) return {};
     var sessionId = '';
     try {
       sessionId = localStorage.getItem(AUTH_STORAGE_KEY) || (state.auth && state.auth.sessionId) || '';
@@ -49,7 +30,7 @@
     return sessionId ? { 'x-session-id': sessionId } : {};
   }
 
-  function _handleHostedUnauthorized(xhr, fallbackMessage) {
+  function _handleUnauthorized(xhr, fallbackMessage) {
     if (!xhr || xhr.status !== 401) return false;
     if (typeof SF.handleHostedUnauthorized === 'function') {
       SF.handleHostedUnauthorized(fallbackMessage || 'Session expired. Sign in with Zoho and try again.');
@@ -357,89 +338,46 @@
   // ─────────────────────────────────────────────────────────────────────────────
 
   SF.saveToProject = function (folderName, svgName, cssName) {
-    if (_isHostedMode()) {
-      if (_isHostedAuthMissing()) {
-        SF.showToast('Sign in with Zoho before saving to the hosted project');
-        return;
-      }
-
-      var spriteName = String(svgName || folderName || 'sprite').replace(/\.svg$/i, '').trim();
-      if (!spriteName) spriteName = 'sprite';
-
-      $.ajax({
-        url: _joinUrl(CATALYST_API_BASE, 'save-sprite'),
-        type: 'POST',
-        headers: _hostedAuthHeaders(),
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify({
-          spriteName: spriteName,
-          svgContent: state.generatedSVG,
-          mode: 'replace'
-        }),
-        success: function (res) {
-          if (_isCatalystError(res) || (res && res.success === false)) {
-            SF.showToast('Server save failed: ' + ((res && (res.message || res.error)) || 'could not save sprite'));
-            return;
-          }
-
-          _clearGeneratedState();
-          SF.showToast('Saved sprite to server');
-          SF.loadSavedFolders();
-        },
-        error: function (xhr) {
-          if (_handleHostedUnauthorized(xhr, 'Session expired while saving sprite. Sign in and try again.')) {
-            return;
-          }
-          var apiError = '';
-          if (xhr && xhr.responseJSON && (xhr.responseJSON.message || xhr.responseJSON.error)) {
-            apiError = xhr.responseJSON.message || xhr.responseJSON.error;
-          } else if (xhr && xhr.responseText) {
-            apiError = xhr.responseText;
-          }
-          SF.showToast('Server save failed' + (apiError ? ': ' + apiError : ''));
-        }
-      });
+    if (_isAuthMissing()) {
+      SF.showToast('Sign in with Zoho before saving to the project');
       return;
     }
 
-    var payload = {
-      folderName: folderName,
-      svgName: svgName,
-      svgContent: state.generatedSVG
-    };
-    
-    // Only include CSS if cssName is provided
-    if (cssName) {
-      payload.cssName = cssName;
-      payload.cssContent = state.generatedCSS;
-    }
+    var spriteName = String(svgName || folderName || 'sprite').replace(/\.svg$/i, '').trim();
+    if (!spriteName) spriteName = 'sprite';
 
     $.ajax({
-      url: '/api/save-folder',
+      url: _joinUrl(CATALYST_API_BASE, 'save-sprite'),
       type: 'POST',
+      headers: _authHeaders(),
       contentType: 'application/json',
-      data: JSON.stringify(payload),
+      dataType: 'json',
+      data: JSON.stringify({
+        spriteName: spriteName,
+        svgContent: state.generatedSVG,
+        mode: 'replace'
+      }),
       success: function (res) {
-        if (_isCatalystError(res)) {
-          _lsSaveSprite(folderName, svgName, cssName);
+        if (_isCatalystError(res) || (res && res.success === false)) {
+          SF.showToast('Server save failed: ' + ((res && (res.message || res.error)) || 'could not save sprite'));
           return;
         }
-        if (res.success) {
-          _clearGeneratedState();
-          SF.showToast('Saved sprites successfully');
-          SF.loadSavedFolders();
-        } else {
-          SF.showToast('Save failed: ' + (res.error || 'Unknown error'));
-        }
+
+        _clearGeneratedState();
+        SF.showToast('Saved sprite to server');
+        SF.loadSavedFolders();
       },
       error: function (xhr) {
-        var res = xhr && xhr.responseJSON;
-        if (_isCatalystError(res)) {
-          _lsSaveSprite(folderName, svgName, cssName);
+        if (_handleUnauthorized(xhr, 'Session expired while saving sprite. Sign in and try again.')) {
           return;
         }
-        SF.showToast('Server error — is server.py running?');
+        var apiError = '';
+        if (xhr && xhr.responseJSON && (xhr.responseJSON.message || xhr.responseJSON.error)) {
+          apiError = xhr.responseJSON.message || xhr.responseJSON.error;
+        } else if (xhr && xhr.responseText) {
+          apiError = xhr.responseText;
+        }
+        SF.showToast('Server save failed' + (apiError ? ': ' + apiError : ''));
       }
     });
   };
@@ -448,78 +386,52 @@
    * Load and render saved sprite folders from server
    */
   SF.loadSavedFolders = function () {
-    if (_isHostedMode()) {
-      if (_isHostedAuthMissing()) {
-        $('#savedFoldersList').html('<div class="saved-empty"><p>Sign in with Zoho to load saved sprites.</p></div>');
-        return;
-      }
+    if (_isAuthMissing()) {
+      $('#savedFoldersList').html('<div class="saved-empty"><p>Sign in with Zoho to load saved sprites.</p></div>');
+      return;
+    }
 
-      $.ajax({
-        url: _joinUrl(CATALYST_API_BASE, 'list-sprites'),
-        type: 'GET',
-        dataType: 'json',
-        headers: _hostedAuthHeaders(),
-        success: function (data) {
-          var sprites = ((data && data.sprites) || []).filter(function (sprite) {
-            var rawName = (sprite && sprite.name) ? String(sprite.name) : '';
-            return rawName.indexOf(HOSTED_LIBRARY_PREFIX) !== 0;
-          });
-          var hostedFolders = sprites.map(function (sprite) {
-            var rawName = (sprite && sprite.name) ? String(sprite.name) : 'sprite';
-            var spriteName = rawName.replace(/\.svg$/i, '');
-            var svgFileName = spriteName + '.svg';
-            return {
-              name: spriteName,
-              files: [{ name: svgFileName, size: (sprite && sprite.size) || 0 }],
-              previewSvg: '',
-              kind: 'sprite',
-              openPath: _joinUrl(CATALYST_API_BASE, 'sprite/' + encodeURIComponent(spriteName) + '.svg'),
-              canDelete: false,
-              _hosted: true
-            };
-          });
-          SF.renderSavedFolders(hostedFolders);
-        },
-        error: function (xhr) {
-          if (_handleHostedUnauthorized(xhr, 'Session expired. Sign in with Zoho to load saved sprites.')) {
-            return;
-          }
+    $.ajax({
+      url: _joinUrl(CATALYST_API_BASE, 'list-sprites'),
+      type: 'GET',
+      dataType: 'json',
+      headers: _authHeaders(),
+      success: function (data) {
+        var sprites = ((data && data.sprites) || []).filter(function (sprite) {
+          var rawName = (sprite && sprite.name) ? String(sprite.name) : '';
+          return rawName.indexOf(HOSTED_LIBRARY_PREFIX) !== 0;
+        });
+        var folders = sprites.map(function (sprite) {
+          var rawName = (sprite && sprite.name) ? String(sprite.name) : 'sprite';
+          var spriteName = rawName.replace(/\.svg$/i, '');
+          var svgFileName = spriteName + '.svg';
+          return {
+            name: spriteName,
+            files: [{ name: svgFileName, size: (sprite && sprite.size) || 0 }],
+            previewSvg: '',
+            kind: 'sprite',
+            openPath: _joinUrl(CATALYST_API_BASE, 'sprite/' + encodeURIComponent(spriteName) + '.svg'),
+            canDelete: true,
+            _hosted: true
+          };
+        });
+        var lsSprites = SF.lsFolders.get().filter(function (f) { return f._ls && f.kind !== 'icon'; });
+        SF.renderSavedFolders(folders.concat(lsSprites));
+      },
+      error: function (xhr) {
+        if (_handleUnauthorized(xhr, 'Session expired. Sign in with Zoho to load saved sprites.')) {
+          return;
+        }
+        var lsSprites = SF.lsFolders.get().filter(function (f) { return f._ls && f.kind !== 'icon'; });
+        if (lsSprites.length) {
+          SF.renderSavedFolders(lsSprites);
+        } else {
           var msg = 'Could not load saved sprites from server.';
           if (xhr && xhr.responseJSON && (xhr.responseJSON.message || xhr.responseJSON.error)) {
             msg += '<br>' + (xhr.responseJSON.message || xhr.responseJSON.error);
           }
           $('#savedFoldersList').html('<div class="saved-empty"><p>' + msg + '</p></div>');
         }
-      });
-      return;
-    }
-
-    var lsSprites = SF.lsFolders.get().filter(function (f) { return f._ls && f.kind !== 'icon'; });
-
-    $.getJSON('/api/list-folders', function (data) {
-      function isIconFolder(folder) {
-        if (!folder) return false;
-        if (folder.kind === 'icon') return true;
-        if (folder.kind === 'sprite') return false;
-        var files = folder.files || [];
-        if (!files.length) return false;
-        return files.every(function (f) {
-          var n = (f && f.name ? f.name : '').toLowerCase();
-          return n.endsWith('.svg');
-        });
-      }
-
-      var serverFolders = (data.folders || []).filter(function (folder) { return !isIconFolder(folder); });
-      SF.renderSavedFolders(serverFolders.concat(lsSprites));
-    }).fail(function (xhr) {
-      if (lsSprites.length) {
-        SF.renderSavedFolders(lsSprites);
-      } else {
-        var res = xhr && xhr.responseJSON;
-        var msg = _isCatalystError(res)
-          ? 'No saved sprites yet. Save a generated sprite to store it here.'
-          : 'Could not load saved folders.<br>Make sure <strong>server.py</strong> is running.';
-        $('#savedFoldersList').html('<div class="saved-empty"><p>' + msg + '</p></div>');
       }
     });
   };
@@ -659,49 +571,28 @@
       return;
     }
 
-    if (folder._hosted) {
-      var hostedSvgUrl = folder.openPath || _joinUrl(CATALYST_API_BASE, 'sprite/' + encodeURIComponent(folder.name || 'sprite') + '.svg');
-      var hostedCssUrl = _joinUrl(CATALYST_API_BASE, 'sprite/' + encodeURIComponent(folder.name || 'sprite') + '.css');
-      var hostedHeaders = _hostedAuthHeaders();
-
-      _fetchText(hostedSvgUrl, function (svgContent) {
-        _fetchText(hostedCssUrl, function (cssContent) {
-          _downloadZip(folder.name, svgName, svgContent, cssName, cssContent);
-        }, function () {
-          _downloadZip(folder.name, svgName, svgContent, cssName, '/* CSS file is not available for this hosted sprite */\n');
-        }, hostedHeaders);
-      }, function (xhr) {
-        if (_handleHostedUnauthorized(xhr, 'Session expired while downloading sprite. Sign in and try again.')) {
-          return;
-        }
-        SF.showToast('Failed to download sprite SVG');
-      }, hostedHeaders);
-      return;
-    }
-
-    var svgUrl = 'saved-sprites/' + encodeURIComponent(folder.name) + '/' + encodeURIComponent(svgName);
-    var cssUrl = 'saved-sprites/' + encodeURIComponent(folder.name) + '/' + encodeURIComponent(cssName);
+    var svgUrl = folder.openPath || _joinUrl(CATALYST_API_BASE, 'sprite/' + encodeURIComponent(folder.name || 'sprite') + '.svg');
+    var cssUrl = _joinUrl(CATALYST_API_BASE, 'sprite/' + encodeURIComponent(folder.name || 'sprite') + '.css');
+    var headers = _authHeaders();
 
     _fetchText(svgUrl, function (svgContent) {
       _fetchText(cssUrl, function (cssContent) {
         _downloadZip(folder.name, svgName, svgContent, cssName, cssContent);
       }, function () {
-        _downloadZip(folder.name, svgName, svgContent, cssName, '/* CSS file missing for this saved sprite */\n');
-      });
-    }, function () {
+        _downloadZip(folder.name, svgName, svgContent, cssName, '/* CSS file is not available for this sprite */\n');
+      }, headers);
+    }, function (xhr) {
+      if (_handleUnauthorized(xhr, 'Session expired while downloading sprite. Sign in and try again.')) {
+        return;
+      }
       SF.showToast('Failed to download sprite SVG');
-    });
+    }, headers);
   };
 
   /**
    * Delete a saved sprite folder
    */
   SF.deleteSavedFolder = function (folderName) {
-    if (_isHostedMode()) {
-      SF.showToast('Delete is not available in hosted mode yet');
-      return;
-    }
-
     var lsAll = SF.lsFolders.get();
     var isLocal = lsAll.some(function (f) { return f.name === folderName && f._ls; });
     if (isLocal) {
@@ -710,17 +601,20 @@
       SF.loadSavedFolders();
       return;
     }
+
     $.ajax({
-      url: '/api/delete-folder/' + encodeURIComponent(folderName),
+      url: _joinUrl(CATALYST_API_BASE, 'delete-sprite/' + encodeURIComponent(folderName)),
       type: 'DELETE',
+      headers: _authHeaders(),
       success: function (res) {
         if (res.success) {
           SF.showToast('Deleted ' + folderName);
           SF.loadSavedFolders();
         }
       },
-      error: function () {
-        SF.showToast('Failed to delete folder');
+      error: function (xhr) {
+        if (_handleUnauthorized(xhr, 'Session expired while deleting sprite. Sign in and try again.')) { return; }
+        SF.showToast('Failed to delete sprite');
       }
     });
   };

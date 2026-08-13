@@ -1,4 +1,8 @@
 {
+	"name": "spriteForgeJoin",
+	"version": "1.0.0",
+	"main": "index.js",
+	"engines": { "node": ">=20" },
 	"dependencies": {
 		"express": "4.17.1",
 		"zcatalyst-sdk-node": "2.2.1",
@@ -6,6 +10,5 @@
 		"cheerio": "1.0.0-rc.12",
 		"svgtofont": "3.19.0",
 		"uuid": "9.0.0"
-	},
-	"main": "index.js"
+	}
 }

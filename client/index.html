@@ -32,35 +32,8 @@
 </head>
 <body>
   <script>
-    (function () {
-      var protocol = String(window.location.protocol || '').toLowerCase();
-      var host = String(window.location.hostname || '').toLowerCase();
-      var port = String(window.location.port || '');
-      var isLocalLike = false;
-
-      if (protocol === 'file:' || !host) {
-        isLocalLike = true;
-      } else if (host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0') {
-        isLocalLike = true;
-      } else if (/\.local$/.test(host)) {
-        isLocalLike = true;
-      } else if (/^10\./.test(host) || /^192\.168\./.test(host) || /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)) {
-        isLocalLike = true;
-      } else if (port === '8080') {
-        // server.py local dev default
-        isLocalLike = true;
-      }
-
-      if (isLocalLike) {
-        window.SF_BACKEND_MODE = 'local';
-        window.SF_AUTH_ENABLED = false;
-      }
-    })();
-
-    window.SF_CATALYST_API_BASE = 'https://spriteforge-60068995555.development.catalystserverless.in/server/spriteForgeJoin/';
-    if (typeof window.SF_AUTH_ENABLED === 'undefined') {
-      window.SF_AUTH_ENABLED = true;
-    }
+    window.SF_CATALYST_API_BASE = 'https://svgtool-123295782.development.localcatalystserverlessfeature.com/server/spriteForgeJoin/';
+    window.SF_AUTH_ENABLED = true;
     window.SF_AUTH_STORAGE_KEY = 'sf_session_id';
   </script>
 

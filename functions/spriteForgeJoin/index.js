@@ -191,15 +191,6 @@ app.use((req, res, next) => {
     return requireSession(req, res, next);
 });
 
-setInterval(() => {
-    const now = Date.now();
-    for (const [sessionId, session] of sessions.entries()) {
-        if (now - session.createdAt > SESSION_TTL_MS) {
-            sessions.delete(sessionId);
-        }
-    }
-}, 60 * 60 * 1000).unref();
-
 // ===================================
 // AUTH: Build Zoho Login URL
 // ===================================

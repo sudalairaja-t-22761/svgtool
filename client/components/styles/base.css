@@ -7,7 +7,8 @@
 svg-sidebar, svg-topbar, svg-upload-existing, svg-upload-icons,
 svg-icon-list, svg-code-output, svg-helpdoc, svg-icon-library,
 svg-settings-modal, svg-figma-modal, svg-filename-modal, svg-toast,
-svg-most-used, svg-duplicate-modal, svg-css-preference-modal, svg-webfont { display: contents; }
+svg-most-used, svg-saved-sprites, svg-duplicate-modal, svg-css-preference-modal,
+svg-upload-icon-modal, svg-multi-upload-modal, svg-webfont { display: contents; }
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Lato', sans-serif;
