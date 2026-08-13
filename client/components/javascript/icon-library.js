@@ -23,7 +23,7 @@
 
   var IS_LOCAL_HOST = _isLocalLikeHost();
   var BACKEND_MODE = window.SF_BACKEND_MODE || (IS_LOCAL_HOST ? 'local' : 'catalyst');
-  var CATALYST_API_BASE = window.SF_CATALYST_API_BASE || 'https://spriteforge-60068995555.development.catalystserverless.in/server/spriteForgeJoin/';
+  var CATALYST_API_BASE = window.SF_CATALYST_API_BASE || '/server/spriteForgeJoin/';
   var AUTH_STORAGE_KEY = window.SF_AUTH_STORAGE_KEY || 'sf_session_id';
 
   SF.libState = {

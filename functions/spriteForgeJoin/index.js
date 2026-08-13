@@ -1,5 +1,8 @@
 "use strict";
 
+// Load .env before any constants are evaluated (no-op in production if file is absent)
+try { require("dotenv").config(); } catch (_) {}
+
 // ===================================
 // SVG Sprite Service — Complete Serverless Code
 // Fully server-based (NO localStorage dependency)
@@ -39,7 +42,18 @@ const fsAsync = require("fs").promises;
 const app = express();
 app.use(express.json({ limit: "10mb" }));
 
+// Resolved before the CORS middleware so the handler can reference it
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "")
+    .split(",").map((s) => s.trim()).filter(Boolean);
+
 app.use((req, res, next) => {
+    const origin = req.headers.origin || "";
+    let isLocalOrigin = false;
+    try { const u = new URL(origin); isLocalOrigin = u.hostname === "localhost" || u.hostname === "127.0.0.1"; } catch (_) {}
+    if (!origin || isLocalOrigin || ALLOWED_ORIGINS.includes(origin)) {
+        res.setHeader("Access-Control-Allow-Origin", origin || "*");
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+    }
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type,x-session-id");
     if (req.method === "OPTIONS") {
@@ -48,7 +62,7 @@ app.use((req, res, next) => {
     next();
 });
 
-const FOLDER_ID = "37672000000012906";
+const FOLDER_ID = process.env.FOLDER_ID || "37672000000012906";
 const TABLE_NAME = "SpriteForgeRegistry";
 
 const ZOHO_ACCOUNTS_BASE = "https://accounts.zoho.in";
@@ -61,6 +75,21 @@ const ZOHO_CLIENT_ID = process.env.ZOHO_CLIENT_ID || "";
 const ZOHO_CLIENT_SECRET = process.env.ZOHO_CLIENT_SECRET || "";
 const ZOHO_REDIRECT_URI = process.env.ZOHO_REDIRECT_URI || "";
 const ZOHO_SCOPE = process.env.ZOHO_SCOPE || "openid,email,profile,phone";
+
+// Returns the redirect URI to use: client-supplied origin (if allowlisted) or the env default.
+// Always normalises to trailing slash so it matches the URI registered in Zoho exactly.
+function resolveRedirectUri(redirectOrigin) {
+    const normalise = (uri) => uri ? uri.replace(/\/?$/, "/") : uri;
+    if (!redirectOrigin) return normalise(ZOHO_REDIRECT_URI);
+    try {
+        const parsed = new URL(redirectOrigin);
+        const isLocal = parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
+        if (isLocal || ALLOWED_ORIGINS.includes(redirectOrigin)) {
+            return normalise(redirectOrigin);
+        }
+    } catch (_) { /* invalid URL — fall through */ }
+    return normalise(ZOHO_REDIRECT_URI);
+}
 
 const AUTH_ENFORCE = String(process.env.AUTH_ENFORCE || "false").toLowerCase() === "true";
 const SESSION_TTL_MS = Number(process.env.SESSION_TTL_MS || 24 * 60 * 60 * 1000);
@@ -195,7 +224,8 @@ app.use((req, res, next) => {
 // AUTH: Build Zoho Login URL
 // ===================================
 app.get("/api/auth/zoho/url", (req, res) => {
-    if (!ZOHO_CLIENT_ID || !ZOHO_REDIRECT_URI) {
+    const hasRedirectOrigin = !!req.query.redirect_origin;
+    if (!ZOHO_CLIENT_ID || (!ZOHO_REDIRECT_URI && !hasRedirectOrigin)) {
         return res.status(500).json({
             success: false,
             message: "Missing ZOHO_CLIENT_ID or ZOHO_REDIRECT_URI"
@@ -206,7 +236,7 @@ app.get("/api/auth/zoho/url", (req, res) => {
     authUrl.searchParams.set("response_type", "code");
     authUrl.searchParams.set("client_id", ZOHO_CLIENT_ID);
     authUrl.searchParams.set("scope", ZOHO_SCOPE);
-    authUrl.searchParams.set("redirect_uri", ZOHO_REDIRECT_URI);
+    authUrl.searchParams.set("redirect_uri", resolveRedirectUri(req.query.redirect_origin));
     authUrl.searchParams.set("access_type", "offline");
 
     res.status(200).json({ success: true, url: authUrl.toString() });
@@ -217,12 +247,12 @@ app.get("/api/auth/zoho/url", (req, res) => {
 // ===================================
 app.post("/api/auth/zoho/callback", async (req, res) => {
     try {
-        const { code } = req.body || {};
+        const { code, redirect_origin } = req.body || {};
         if (!code) {
             return res.status(400).json({ success: false, message: "Missing authorization code" });
         }
 
-        if (!ZOHO_CLIENT_ID || !ZOHO_CLIENT_SECRET || !ZOHO_REDIRECT_URI) {
+        if (!ZOHO_CLIENT_ID || !ZOHO_CLIENT_SECRET) {
             return res.status(500).json({
                 success: false,
                 message: "Missing Zoho OAuth configuration"
@@ -233,7 +263,7 @@ app.post("/api/auth/zoho/callback", async (req, res) => {
             grant_type: "authorization_code",
             client_id: ZOHO_CLIENT_ID,
             client_secret: ZOHO_CLIENT_SECRET,
-            redirect_uri: ZOHO_REDIRECT_URI,
+            redirect_uri: resolveRedirectUri(redirect_origin),
             code
         });
 
@@ -759,13 +789,7 @@ app.delete("/delete-sprite/:name", async (req, res) => {
 // WEBFONT: SVG files → WOFF2/WOFF/TTF/EOT/CSS icon font
 // ===================================
 
-const wfUpload = multer({
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024, files: 500 },
-    fileFilter(req, file, cb) {
-        cb(null, file.mimetype === "image/svg+xml" || file.originalname.toLowerCase().endsWith(".svg"));
-    }
-});
+const WEBFONT_FOLDER_ID = process.env.WEBFONT_FOLDER_ID || "";
 
 const WF_SKIP_ID = /^(stop|path\d|gradient|linear|radial|clip|filter|mask|title|defs|layer|svg|metadata|guide|grid|perspective|base|namedview)/i;
 
@@ -776,7 +800,7 @@ async function _getWfSvgtofont() {
 }
 
 function wfSanitizeName(raw, fallback) {
-    return (String(raw || "")).replace(/\.svg$/i, "").replace(/[^a-zA-Z0-9]/g, "-")
+    return String(raw || "").replace(/\.svg$/i, "").replace(/[^a-zA-Z0-9]/g, "-")
         .toLowerCase().replace(/-+/g, "-").replace(/^-+|-+$/g, "") || fallback || "icon";
 }
 
@@ -797,8 +821,8 @@ function wfPrepSvg(svgText) {
     } catch (_) { return svgText; }
 }
 
-async function wfReadB64(p) {
-    try { return (await fsAsync.readFile(p)).toString("base64"); } catch (_) { return null; }
+async function wfReadBuf(p) {
+    try { return await fsAsync.readFile(p); } catch (_) { return null; }
 }
 
 function wfParseGlyphs(css, fontName) {
@@ -809,52 +833,67 @@ function wfParseGlyphs(css, fontName) {
     return glyphs;
 }
 
-app.post("/svgwebfont", wfUpload.array("files", 500), async (req, res) => {
+async function wfUploadFont(folder, fileName, buffer) {
+    const tmp = `/tmp/${uuidv4()}-${fileName}`;
+    await fsAsync.writeFile(tmp, buffer);
+    try {
+        const result = await folder.uploadFile({ code: fs.createReadStream(tmp), name: fileName });
+        return String(result.id || result.file_id);
+    } finally {
+        await fsAsync.unlink(tmp).catch(() => {});
+    }
+}
+
+const wfUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024, files: 500 },
+    fileFilter(req, file, cb) {
+        cb(null, file.mimetype === "image/svg+xml" || file.originalname.toLowerCase().endsWith(".svg"));
+    }
+});
+
+app.post("/generate", wfUpload.array("files", 500), async (req, res) => {
     const fontName = wfSanitizeName(req.body.fontName, "iconfont");
-    const mode = req.body.mode === "sprite" ? "sprite" : "files";
-    const files = req.files || [];
+    const mode     = req.body.mode === "sprite" ? "sprite" : "files";
+    const files    = req.files || [];
     if (!files.length) return res.status(400).json({ error: "No SVG files received" });
 
-    const tmpDir = `/tmp/sf-wf-${uuidv4()}`;
-    const srcDir = `${tmpDir}/src`;
+    const tmpDir  = `/tmp/wf-${uuidv4()}`;
+    const srcDir  = `${tmpDir}/src`;
     const distDir = `${tmpDir}/dist`;
 
     try {
-        await fsAsync.mkdir(srcDir, { recursive: true });
+        await fsAsync.mkdir(srcDir,  { recursive: true });
         await fsAsync.mkdir(distDir, { recursive: true });
 
         const iconNames = [];
-        const uniq = (base) => { let n = base, i = 2; while (iconNames.includes(n)) n = `${base}-${i++}`; return n; };
+        const uniq = base => { let n = base, i = 2; while (iconNames.includes(n)) n = `${base}-${i++}`; return n; };
 
         if (mode === "sprite") {
             const $ = cheerio.load(files[0].buffer.toString("utf8"), { xmlMode: true });
             const elById = {};
             $("[id]").each((_, el) => { elById[$(el).attr("id")] = el; });
-            const symbols = [];
-            $("symbol[id]").each((_, el) => symbols.push(el));
-            for (const sym of symbols) {
+            $("symbol[id]").each(async (_, sym) => {
                 const rawId = $(sym).attr("id");
-                if (!rawId || WF_SKIP_ID.test(rawId)) continue;
+                if (!rawId || WF_SKIP_ID.test(rawId)) return;
                 const $sym = $(sym).clone();
                 $sym.find("use").each((_, use) => {
                     const href = ($(use).attr("href") || $(use).attr("xlink:href") || "").replace(/^#/, "");
                     if (href && elById[href]) $(use).replaceWith($(elById[href]).clone());
                 });
-                const vb = $(sym).attr("viewBox") || "0 0 24 24";
+                const vb   = $(sym).attr("viewBox") || "0 0 24 24";
                 const name = uniq(wfSanitizeName(rawId));
                 iconNames.push(name);
                 await fsAsync.writeFile(`${srcDir}/${name}.svg`, wfPrepSvg(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}">${$sym.html() || ""}</svg>`), "utf8");
-            }
-            const flatEls = [];
-            $("svg > path[id], svg > g[id]").each((_, el) => flatEls.push(el));
-            for (const el of flatEls) {
+            });
+            $("svg > path[id], svg > g[id]").each(async (_, el) => {
                 const rawId = $(el).attr("id");
-                if (!rawId || WF_SKIP_ID.test(rawId)) continue;
+                if (!rawId || WF_SKIP_ID.test(rawId)) return;
                 const rootVb = $("svg").attr("viewBox") || `0 0 ${parseFloat($("svg").attr("width")) || 24} ${parseFloat($("svg").attr("height")) || 24}`;
-                const name = uniq(wfSanitizeName(rawId));
+                const name   = uniq(wfSanitizeName(rawId));
                 iconNames.push(name);
                 await fsAsync.writeFile(`${srcDir}/${name}.svg`, wfPrepSvg(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${rootVb}">${$.html(el)}</svg>`), "utf8");
-            }
+            });
         } else {
             for (const file of files) {
                 const name = uniq(wfSanitizeName(file.originalname.replace(/\.svg$/i, "")));
@@ -869,42 +908,66 @@ app.post("/svgwebfont", wfUpload.array("files", 500), async (req, res) => {
         }
 
         const svgtofont = await _getWfSvgtofont();
-        await svgtofont({ src: srcDir, dist: distDir, fontName, css: true, startUnicode: 0xe001,
+        await svgtofont({
+            src: srcDir, dist: distDir, fontName, css: true, startUnicode: 0xe001,
             svgicons2svgfont: { fontHeight: 1000, normalize: true, fixedWidth: true, centerHorizontally: true }
         });
 
-        const [woff2, woff, ttf, eot, svgFont] = await Promise.all([
-            wfReadB64(`${distDir}/${fontName}.woff2`), wfReadB64(`${distDir}/${fontName}.woff`),
-            wfReadB64(`${distDir}/${fontName}.ttf`),  wfReadB64(`${distDir}/${fontName}.eot`),
-            wfReadB64(`${distDir}/${fontName}.svg`)
+        const [woff2Buf, woffBuf, ttfBuf, eotBuf, svgBuf] = await Promise.all([
+            wfReadBuf(`${distDir}/${fontName}.woff2`),
+            wfReadBuf(`${distDir}/${fontName}.woff`),
+            wfReadBuf(`${distDir}/${fontName}.ttf`),
+            wfReadBuf(`${distDir}/${fontName}.eot`),
+            wfReadBuf(`${distDir}/${fontName}.svg`)
         ]);
+
+        // ── Save to Catalyst File Store ──────────────────────────────────────
+        const stored = {};
+        if (WEBFONT_FOLDER_ID) {
+            try {
+                const folder = catalyst.initialize(req).filestore().folder(WEBFONT_FOLDER_ID);
+                const ts     = Date.now();
+                await Promise.all([
+                    woff2Buf && wfUploadFont(folder, `${fontName}-${ts}.woff2`, woff2Buf).then(id => { stored.woff2 = id; }),
+                    woffBuf  && wfUploadFont(folder, `${fontName}-${ts}.woff`,  woffBuf).then(id  => { stored.woff  = id; }),
+                    ttfBuf   && wfUploadFont(folder, `${fontName}-${ts}.ttf`,   ttfBuf).then(id   => { stored.ttf   = id; }),
+                    eotBuf   && wfUploadFont(folder, `${fontName}-${ts}.eot`,   eotBuf).then(id   => { stored.eot   = id; }),
+                    svgBuf   && wfUploadFont(folder, `${fontName}-${ts}.svg`,   svgBuf).then(id   => { stored.svg   = id; }),
+                ].filter(Boolean));
+                console.log("[webfont] saved to File Store:", stored);
+            } catch (storeErr) {
+                console.warn("[webfont] File Store save failed:", storeErr.message);
+            }
+        }
 
         let genCss = "";
         for (const p of [`${distDir}/${fontName}.css`, `${distDir}/css/${fontName}.css`]) {
             try { genCss = await fsAsync.readFile(p, "utf8"); break; } catch (_) {}
         }
+
         let glyphs = wfParseGlyphs(genCss, fontName);
-        if (!glyphs.length && svgFont) {
-            const $sf = cheerio.load(Buffer.from(svgFont, "base64").toString("utf8"), { xmlMode: true });
+        if (!glyphs.length && svgBuf) {
+            const $sf = cheerio.load(svgBuf.toString("utf8"), { xmlMode: true });
             $sf("glyph[unicode]").each((_, g) => {
-                const unicode = $sf(g).attr("unicode") || "", gname = $sf(g).attr("glyph-name") || "", cp = unicode.codePointAt(0);
+                const unicode = $sf(g).attr("unicode") || "", gname = $sf(g).attr("glyph-name") || "";
+                const cp = unicode.codePointAt(0);
                 if (gname && cp && cp >= 0xe001) glyphs.push({ name: gname, cp: cp.toString(16) });
             });
         }
         if (!glyphs.length) glyphs = iconNames.map((name, i) => ({ name, cp: (0xe001 + i).toString(16) }));
 
-        const ts = Date.now();
+        const ts       = Date.now();
         const srcParts = [
-            eot     ? `url("${fontName}.eot?t=${ts}#iefix") format("embedded-opentype")` : null,
-            woff2   ? `url("${fontName}.woff2?t=${ts}") format("woff2")`   : null,
-            woff    ? `url("${fontName}.woff?t=${ts}") format("woff")`     : null,
-            ttf     ? `url("${fontName}.ttf?t=${ts}") format("truetype")`  : null,
-            svgFont ? `url("${fontName}.svg?t=${ts}#${fontName}") format("svg")` : null
+            eotBuf   ? `url("${fontName}.eot?t=${ts}#iefix") format("embedded-opentype")` : null,
+            woff2Buf ? `url("${fontName}.woff2?t=${ts}") format("woff2")`  : null,
+            woffBuf  ? `url("${fontName}.woff?t=${ts}") format("woff")`    : null,
+            ttfBuf   ? `url("${fontName}.ttf?t=${ts}") format("truetype")` : null,
+            svgBuf   ? `url("${fontName}.svg?t=${ts}#${fontName}") format("svg")` : null
         ].filter(Boolean).join(",\n       ");
 
         const css = [
             `@font-face {`, `  font-family: "${fontName}";`,
-            eot ? `  src: url("${fontName}.eot?t=${ts}");` : null,
+            eotBuf ? `  src: url("${fontName}.eot?t=${ts}");` : null,
             `  src: ${srcParts};`, `  font-weight: normal;`, `  font-style: normal;`, `}`, ``,
             `[class^="${fontName}-"], [class*=" ${fontName}-"] {`,
             `  font-family: "${fontName}" !important;`, `  speak: none;`, `  font-style: normal;`,
@@ -916,10 +979,23 @@ app.post("/svgwebfont", wfUpload.array("files", 500), async (req, res) => {
 
         const previewHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${fontName}</title><link rel="stylesheet" href="${fontName}.css"><style>body{font-family:-apple-system,sans-serif;padding:24px;background:#f8f9fa;margin:0}h1{color:#1a1a2e;margin-bottom:4px}.sub{color:#666;margin-bottom:24px;font-size:14px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 8px;text-align:center;cursor:pointer;transition:all .15s}.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);border-color:#6366f1}.card i{font-size:28px;display:block;margin-bottom:8px;color:#374151}.card span{font-size:10px;color:#6b7280;display:block;word-break:break-all}.t{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#1e293b;color:#fff;padding:10px 20px;border-radius:8px;font-size:14px;transition:transform .2s;pointer-events:none}.t.show{transform:translateX(-50%) translateY(0)}</style></head><body><h1>${fontName}</h1><p class="sub">${glyphs.length} icon${glyphs.length !== 1 ? "s" : ""} &mdash; click to copy class</p><div class="grid">${glyphs.map(g => `<div class="card" onclick="cp('${fontName} ${fontName}-${g.name}')"><i class="${fontName} ${fontName}-${g.name}"></i><span>${g.name}</span></div>`).join("")}</div><div class="t" id="t">Copied!</div><script>function cp(c){navigator.clipboard.writeText(c).catch(function(){var x=document.createElement("textarea");x.value=c;document.body.appendChild(x);x.select();document.execCommand("copy");document.body.removeChild(x)});var t=document.getElementById("t");t.classList.add("show");setTimeout(function(){t.classList.remove("show")},2000)}</script></body></html>`;
 
-        res.json({ fontName, icons: glyphs.map(g => g.name), css, previewHtml, fonts: { woff2, woff, ttf, eot, svg: svgFont } });
+        res.json({
+            fontName,
+            icons:       glyphs.map(g => g.name),
+            css,
+            previewHtml,
+            stored,
+            fonts: {
+                woff2: woff2Buf ? woff2Buf.toString("base64") : null,
+                woff:  woffBuf  ? woffBuf.toString("base64")  : null,
+                ttf:   ttfBuf   ? ttfBuf.toString("base64")   : null,
+                eot:   eotBuf   ? eotBuf.toString("base64")   : null,
+                svg:   svgBuf   ? svgBuf.toString("base64")   : null
+            }
+        });
 
     } catch (err) {
-        console.error("[WebFontForge]", err);
+        console.error("[webfont]", err);
         res.status(500).json({ error: err.message || "Font generation failed" });
     } finally {
         fsAsync.rm(tmpDir, { recursive: true, force: true }).catch(() => {});
@@ -927,3 +1003,13 @@ app.post("/svgwebfont", wfUpload.array("files", 500), async (req, res) => {
 });
 
 module.exports = app;
+
+// Local development only — Catalyst runs the app via module.exports
+if (require.main === module) {
+    require('dotenv').config();
+    const http = require('http');
+    const PORT = process.env.PORT || 3001;
+    http.createServer(app).listen(PORT, () => {
+        console.log(`[local] Function server running at http://localhost:${PORT}`);
+    });
+}

@@ -5,18 +5,8 @@
 (function (SF, $) {
   'use strict';
 
-  var WEBFONT_API = (function () {
-    var p = String(window.location.protocol || '').toLowerCase();
-    var h = String(window.location.hostname || '').toLowerCase();
-    var isLocal = p === 'file:' || !h || h === 'localhost' || h === '127.0.0.1' ||
-      h === '0.0.0.0' || /\.local$/.test(h) || /^10\./.test(h) ||
-      /^192\.168\./.test(h) || window.location.port === '8080' ||
-      window.SF_BACKEND_MODE === 'local';
-    if (isLocal) return 'http://localhost:3001/svgwebfont';
-    return ((window.SF_CATALYST_API_BASE ||
-      'https://spriteforge-60068995555.development.catalystserverless.in/server/spriteForgeJoin/')
-      .replace(/\/+$/, '')) + '/svgwebfont';
-  }());
+  var WEBFONT_API = (window.SF_CATALYST_API_BASE || '/server/spriteForgeJoin/')
+    .replace(/\/+$/, '') + '/generate';
 
   var SKIP_ID = /^(stop|path\d|gradient|linear|radial|clip|filter|mask|title|defs|layer|svg|metadata|guide|grid|perspective|base|namedview)/i;
 
@@ -431,7 +421,7 @@
         _stopLoadingBar();
         var msg = err.message || 'Generation failed';
         if (msg.toLowerCase().indexOf('fetch') !== -1 || msg.toLowerCase().indexOf('network') !== -1 || msg.toLowerCase().indexOf('failed to fetch') !== -1) {
-          msg = 'Cannot connect to WebFont server. Run: cd webfont && npm install && node server.js';
+          msg = 'Cannot connect to the server. Make sure the local function server is running: cd functions/spriteForgeJoin && node index.js';
         }
         showError(msg);
         $('#wfGenerateBtn').prop('disabled', false).removeClass('loading');

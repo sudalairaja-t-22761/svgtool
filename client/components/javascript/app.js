@@ -14,7 +14,7 @@
   var _docRightPanelHelpMarkup = '';
   var _workspaceCustomiseNode = null;
   var _workspaceCustomiseHome = null;
-  var CATALYST_SPRITE_BASE = window.SF_SPRITE_URL_BASE || 'https://spriteforge-60068995555.development.catalystserverless.in/server/spriteForgeJoin/';
+  var CATALYST_SPRITE_BASE = window.SF_SPRITE_URL_BASE || window.SF_CATALYST_API_BASE || '/server/spriteForgeJoin/';
   var AUTH_API_BASE = window.SF_CATALYST_API_BASE || CATALYST_SPRITE_BASE;
   var AUTH_ENABLED = !!window.SF_AUTH_ENABLED;
   var AUTH_STORAGE_KEY = window.SF_AUTH_STORAGE_KEY || 'sf_session_id';
@@ -35,7 +35,7 @@
   var _authAjaxPrefilterInstalled = false;
 
   function _isHostedAuthEnabled() {
-    return AUTH_ENABLED && !IS_LOCAL_HOST;
+    return AUTH_ENABLED;
   }
 
   function _getStoredSessionId() {
@@ -153,7 +153,8 @@
   }
 
   function _beginZohoLogin() {
-    return _authFetch('api/auth/zoho/url', { method: 'GET', headers: {} }).then(function (data) {
+    var origin = window.location.origin || (window.location.protocol + '//' + window.location.host);
+    return _authFetch('api/auth/zoho/url?redirect_origin=' + encodeURIComponent(origin), { method: 'GET', headers: {} }).then(function (data) {
       if (!data || !data.url) {
         throw new Error('Could not compute Zoho login URL');
       }
@@ -170,9 +171,10 @@
   }
 
   function _exchangeZohoCode(code) {
+    var origin = window.location.origin || (window.location.protocol + '//' + window.location.host);
     return _authFetch('api/auth/zoho/callback', {
       method: 'POST',
-      body: JSON.stringify({ code: code })
+      body: JSON.stringify({ code: code, redirect_origin: origin })
     }).then(function (data) {
       _setAuthState(data.sessionId, data.user, data.zohoProfile);
       _updateAuthUi();
