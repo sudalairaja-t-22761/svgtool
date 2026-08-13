@@ -8,6 +8,8 @@
   var WEBFONT_API = (window.SF_CATALYST_API_BASE || '/server/spriteForgeJoin/')
     .replace(/\/+$/, '') + '/generate';
 
+  var WEBFONT_BASE = (window.SF_CATALYST_API_BASE || '/server/spriteForgeJoin/').replace(/\/+$/, '');
+
   var SKIP_ID = /^(stop|path\d|gradient|linear|radial|clip|filter|mask|title|defs|layer|svg|metadata|guide|grid|perspective|base|namedview)/i;
 
   // ── State ────────────────────────────────────────────────────────────────
@@ -566,9 +568,170 @@
       var cls = $(this).data('wfclass');
       if (cls) copyText(cls, 'Copied: ' + cls);
     });
+
+    // Save WebFont button
+    $(document).on('click', '#wfSaveBtn', function () {
+      SF.saveWebFont();
+    });
+
+    // Refresh saved webfonts
+    $(document).on('click', '#refreshSavedWebfontsBtn', function () {
+      SF.loadSavedWebFonts();
+    });
+
+    // Delete saved webfont (double-click to confirm)
+    var _swfDeleteClicks = {};
+    $(document).on('click', '.swf-del-btn', function () {
+      var rowId = $(this).data('rowid');
+      var now = Date.now();
+      if (_swfDeleteClicks[rowId] && now - _swfDeleteClicks[rowId] < 3000) {
+        delete _swfDeleteClicks[rowId];
+        var $btn = $(this);
+        $btn.prop('disabled', true);
+        wfApiFetch('delete-webfont/' + rowId, { method: 'DELETE' })
+          .then(function () { SF.loadSavedWebFonts(); })
+          .catch(function (err) { showToast('Delete failed: ' + (err.message || ''), 3000); $btn.prop('disabled', false); });
+      } else {
+        _swfDeleteClicks[rowId] = now;
+        showToast('Click Delete again to confirm removal', 2500);
+      }
+    });
   }
 
   // Init via $(document).ready — all handlers are delegated so timing is safe
   $(document).ready(function () { init(); });
+
+  // ── API helper (adds session id header) ──────────────────────────────────
+
+  function wfApiFetch(path, options) {
+    var url = WEBFONT_BASE + '/' + String(path).replace(/^\//, '');
+    var opts = $.extend(true, { headers: { 'Content-Type': 'application/json' } }, options || {});
+    var sid = SF.state && SF.state.auth && SF.state.auth.sessionId;
+    if (sid) { opts.headers['x-session-id'] = sid; }
+    return fetch(url, opts).then(function (r) {
+      return r.text().then(function (text) {
+        var data = {};
+        try { data = text ? JSON.parse(text) : {}; } catch (e) { data = { message: text }; }
+        if (!r.ok) { throw new Error((data && data.message) || ('Error ' + r.status)); }
+        return data;
+      });
+    });
+  }
+
+  // ── Save WebFont ──────────────────────────────────────────────────────────
+
+  SF.saveWebFont = function () {
+    if (!wf.result) { return; }
+    var $btn    = $('#wfSaveBtn');
+    var $status = $('#wfSaveStatus');
+    $btn.prop('disabled', true).addClass('saving');
+    $status.removeClass('ok err').text('Saving…');
+
+    wfApiFetch('save-webfont', {
+      method: 'POST',
+      body: JSON.stringify({
+        fontName:    wf.result.fontName,
+        fonts:       wf.result.fonts,
+        css:         wf.result.css,
+        previewHtml: wf.result.previewHtml
+      })
+    }).then(function () {
+      $status.addClass('ok').text('Saved!');
+      setTimeout(function () { $status.text(''); }, 3000);
+    }).catch(function (err) {
+      $status.addClass('err').text(err.message || 'Save failed');
+    }).finally(function () {
+      $btn.prop('disabled', false).removeClass('saving');
+    });
+  };
+
+  // ── Saved WebFonts page ───────────────────────────────────────────────────
+
+  SF.loadSavedWebFonts = function () {
+    var $list = $('#savedWebfontsList');
+    if (!$list.length) { return; }
+
+    var sid = SF.state && SF.state.auth && SF.state.auth.sessionId;
+    if (!sid) {
+      $list.html('<div class="saved-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg><p>Sign in to view your saved WebFonts.</p></div>');
+      return;
+    }
+
+    $list.html('<div class="saved-empty"><p>Loading…</p></div>');
+    wfApiFetch('list-webfonts').then(function (data) {
+      SF.renderSavedWebFonts(data.fonts || []);
+    }).catch(function (err) {
+      $list.html('<div class="empty-state"><span>Error: ' + (err.message || 'Could not load') + '</span></div>');
+    });
+  };
+
+  SF.renderSavedWebFonts = function (fonts) {
+    var $list = $('#savedWebfontsList');
+    if (!$list.length) { return; }
+    if (!fonts || !fonts.length) {
+      $list.html(
+        '<div class="saved-empty">' +
+          '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">' +
+            '<polyline points="4 7 4 4 20 4 20 7"/>' +
+            '<line x1="9" y1="20" x2="15" y2="20"/>' +
+            '<line x1="12" y1="4" x2="12" y2="20"/>' +
+          '</svg>' +
+          '<p>No saved WebFonts yet.<br>Generate a font and click <strong>"Save WebFont"</strong> to store it here.</p>' +
+        '</div>'
+      );
+      return;
+    }
+
+    var html = fonts.map(function (f) {
+      var date  = f.ts ? new Date(Number(f.ts)).toLocaleDateString() : '';
+      var files = f.files || {};
+      var name  = f.fontName;
+      // build download URL: Stratus object key or local fallback
+      function dlUrl(fname) {
+        var local = String(f.folderKey || '').startsWith('local:');
+        var key   = local
+          ? f.folderKey + '/' + fname
+          : (f.folderKey ? f.folderKey + '/' + fname : '');
+        return WEBFONT_BASE + '/get-webfont-file?key=' + encodeURIComponent(key);
+      }
+      var formats = [
+        { ext: 'woff2' }, { ext: 'woff' }, { ext: 'ttf'  },
+        { ext: 'eot'   }, { ext: 'svg'  }, { ext: 'css'  },
+        { ext: 'html'  }
+      ];
+      var chips = formats.map(function (fmt) {
+        var fname = fmt.ext === 'html' ? name + '_preview.html' : name + '.' + fmt.ext;
+        return '<a class="swf-dl-chip" href="' + dlUrl(fname) + '" download="' + fname + '">' + fmt.ext.toUpperCase() + '</a>';
+      }).join('');
+
+      return '<div class="saved-folder-card">' +
+        '<div class="saved-folder-header">' +
+          '<div class="saved-folder-icon">' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+              '<polyline points="4 7 4 4 20 4 20 7"/>' +
+              '<line x1="9" y1="20" x2="15" y2="20"/>' +
+              '<line x1="12" y1="4" x2="12" y2="20"/>' +
+            '</svg>' +
+          '</div>' +
+          '<div class="saved-folder-meta">' +
+            '<span class="saved-folder-name">' + $('<span>').text(f.fontName).html() + '</span>' +
+            '<span class="saved-folder-date">' + date + '</span>' +
+          '</div>' +
+          '<div class="saved-folder-actions">' +
+            '<button class="saved-delete-btn swf-del-btn" data-rowid="' + f.rowId + '" title="Delete (click twice)">' +
+              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                '<polyline points="3 6 5 6 21 6"/>' +
+                '<path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>' +
+                '<path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>' +
+              '</svg>' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="swf-dl-group" style="margin-top:10px">' + chips + '</div>' +
+      '</div>';
+    }).join('');
+
+    $list.html(html);
+  };
 
 }(window.SpriteForge || {}, window.jQuery));

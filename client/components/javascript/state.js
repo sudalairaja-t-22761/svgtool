@@ -45,8 +45,8 @@ window.SpriteForge = window.SpriteForge || {};
       enabled: false,
       isAuthenticated: false,
       sessionId: '',
-      userName: '',
-      userEmail: '',
+      username:   '',
+      useremail:  '',
       userAvatar: '',
       zohoProfile: null
     },

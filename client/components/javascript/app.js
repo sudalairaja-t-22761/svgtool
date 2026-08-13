@@ -57,8 +57,8 @@
     state.auth.enabled = AUTH_ENABLED;
     state.auth.isAuthenticated = !!sessionId;
     state.auth.sessionId = sessionId || '';
-    state.auth.userName = (user && user.name) || '';
-    state.auth.userEmail = (user && user.email) || '';
+    state.auth.username   = (user && user.name)  || '';
+    state.auth.useremail  = (user && user.email) || '';
     state.auth.userAvatar = (user && user.avatar) || '';
     state.auth.zohoProfile = zohoProfile || null;
     _setStoredSessionId(sessionId || '');
@@ -97,9 +97,9 @@
       .toggleClass('hidden', !hasAuth)
       .toggleClass('is-authenticated', isSignedIn)
       .text(isSignedIn ? 'Signed in' : 'Auth required');
-
-    $('#authUserName').text(state.auth.userName || 'Zoho User');
-    $('#authUserEmail').text(state.auth.userEmail || '');
+    console.log('state.auth', state.auth);
+    $('#authUserName').text(state.auth.username  || 'Zoho User');
+    $('#authUserEmail').text(state.auth.useremail || '');
     $('#authUserAvatar')
       .toggleClass('hidden', !userAvatar)
       .attr('src', userAvatar || '');
@@ -1916,6 +1916,12 @@
       SF.switchPage('savedsprites');
     });
 
+    // ---- Saved WebFonts Page ----
+    $('#savedWebfontsBtn').on('click', function () {
+      SF.switchPage('savedwebfonts');
+      SF.loadSavedWebFonts();
+    });
+
     // Saved folders: delete
     $(document).on('click', '.saved-delete-btn', function () {
       var name = $(this).data('folder');
@@ -2393,6 +2399,9 @@
       }
       if (typeof SF.loadSavedFolders === 'function') {
         SF.loadSavedFolders();
+      }
+      if (typeof SF.loadSavedWebFonts === 'function') {
+        SF.loadSavedWebFonts();
       }
 
       // Restore tile size preference

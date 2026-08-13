@@ -33,11 +33,53 @@ const express = require("express");
 const catalyst = require("zcatalyst-sdk-node");
 const fs = require("fs");
 const path = require("path");
+const os = require("os");
 const crypto = require("crypto");
 const multer = require("multer");
 const cheerio = require("cheerio");
 const { v4: uuidv4 } = require("uuid");
 const fsAsync = require("fs").promises;
+
+// ── Local-dev webfont storage (used when Catalyst runtime is unavailable) ────
+const LOCAL_WF_DIR   = path.join(os.tmpdir(), "svgforge-wf");
+const LOCAL_WF_INDEX = path.join(LOCAL_WF_DIR, "_index.json");
+
+function localWfRead()  { try { return JSON.parse(fs.readFileSync(LOCAL_WF_INDEX, "utf8")); } catch (_) { return { entries: [] }; } }
+function localWfWrite(idx) { fs.mkdirSync(LOCAL_WF_DIR, { recursive: true }); fs.writeFileSync(LOCAL_WF_INDEX, JSON.stringify(idx, null, 2)); }
+
+// ── Catalyst Stratus object storage ──────────────────────────────────────────
+const STRATUS_BUCKET = (process.env.STRATUS_BUCKET_URL || "https://svgtool-development.lzstratus.com").replace(/\/$/, "");
+
+// Forward Catalyst runtime credential headers so Stratus trusts this function
+function stratusHeaders(req) {
+    const fwd = ["x-zc-admin-cred-type","x-zc-admin-cred-token","x-zc-user-cred-type",
+                 "x-zc-user-cred-token","x-zc-projectid","x-zc-project-key",
+                 "x-zc-project-secret-key","x-zc-environment","x-zcsrf-token","cookie"];
+    return Object.fromEntries(fwd.filter(k => req.headers[k]).map(k => [k, req.headers[k]]));
+}
+async function stratusPut(req, key, buf, ct) {
+    const r = await fetch(`${STRATUS_BUCKET}/${key}`, {
+        method: "PUT", body: buf,
+        headers: { ...stratusHeaders(req), "Content-Type": ct || "application/octet-stream" }
+    });
+    if (!r.ok) throw new Error(`Stratus PUT [${r.status}]: ${await r.text()}`);
+}
+async function stratusGet(req, key) {
+    const r = await fetch(`${STRATUS_BUCKET}/${key}`, { headers: stratusHeaders(req) });
+    if (!r.ok) throw new Error(`Stratus GET [${r.status}]`);
+    return Buffer.from(await r.arrayBuffer());
+}
+async function stratusDelete(req, key) {
+    await fetch(`${STRATUS_BUCKET}/${key}`, { method: "DELETE", headers: stratusHeaders(req) }).catch(() => {});
+}
+async function stratusReadIndex(req, eid) {
+    try { return JSON.parse((await stratusGet(req, `${eid}/webfonts/_index.json`)).toString("utf8")); }
+    catch (_) { return { entries: [] }; }
+}
+async function stratusWriteIndex(req, eid, idx) {
+    await stratusPut(req, `${eid}/webfonts/_index.json`,
+        Buffer.from(JSON.stringify(idx, null, 2), "utf8"), "application/json");
+}
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
@@ -316,11 +358,38 @@ app.post("/api/auth/zoho/callback", async (req, res) => {
             refreshToken: tokenData.json.refresh_token || null
         });
 
+        // Persist user profile on first login; deduplicate by userEmail
+        let userDataStatus = "not_attempted";
+        try {
+            const ca    = catalyst.initialize(req);
+            const zcql  = ca.zcql();
+            const safe  = (user.email || "").replace(/'/g, "''");
+            const rows  = await zcql.executeZCQLQuery(
+                `SELECT ROWID FROM user_data WHERE userEmail = '${safe}'`
+            );
+            if (rows && rows.length) {
+                userDataStatus = `exists (ROWID ${rows[0].user_data && rows[0].user_data.ROWID})`;
+            } else {
+                const inserted = await ca.datastore().table(49699000000329011).insertRow({
+                    userName:   user.name                            || "",
+                    userEmail:  user.email                           || "",
+                    userAvatar: user.picture                         || "",
+                    userid:     String(mergedProfile.sub || user.id || "")
+                });
+                userDataStatus = `inserted (ROWID ${inserted && inserted.ROWID})`;
+            }
+        } catch (dsErr) {
+            userDataStatus = `error: ${dsErr.message}`;
+            console.error("[user_data] error:", dsErr.message);
+        }
+        console.log("[user_data] status:", userDataStatus);
+
         res.status(200).json({
             success: true,
             sessionId,
             user,
-            zohoProfile: mergedProfile
+            zohoProfile:    mergedProfile,
+            userDataStatus  // visible in browser dev tools Network tab
         });
     } catch (error) {
         console.error("ZOHO CALLBACK ERROR:", error);
@@ -393,6 +462,29 @@ app.get("/api/avatar/proxy", async (req, res) => {
     } catch (error) {
         console.error("AVATAR PROXY ERROR:", error);
         res.status(500).json({ success: false, message: "Avatar proxy failed" });
+    }
+});
+
+// ===================================
+// DEBUG: full DataStore + header diagnostic (remove after confirming working)
+// ===================================
+app.get("/api/test-userdata", async (req, res) => {
+    const catalystHeaders = ["x-zc-projectid","x-zc-project-key","x-zc-admin-cred-token",
+                             "x-zc-admin-cred-type","x-zc-environment"].reduce((acc, k) => {
+        acc[k] = req.headers[k] ? "present" : "MISSING";
+        return acc;
+    }, {});
+    try {
+        const ca      = catalyst.initialize(req);
+        const zcql    = ca.zcql();
+        const rows    = await zcql.executeZCQLQuery("SELECT ROWID FROM user_data");
+        const inserted = await ca.datastore().table(49699000000329011).insertRow({
+            userName: "test", userEmail: "test@test.com", userAvatar: "", userid: "test-sub"
+        });
+        res.json({ success: true, catalystInit: "ok", catalystHeaders,
+                   existingCount: rows && rows.length, insertedROWID: inserted && inserted.ROWID });
+    } catch (err) {
+        res.json({ success: false, catalystHeaders, error: err.message });
     }
 });
 
@@ -999,6 +1091,179 @@ app.post("/generate", wfUpload.array("files", 500), async (req, res) => {
         res.status(500).json({ error: err.message || "Font generation failed" });
     } finally {
         fsAsync.rm(tmpDir, { recursive: true, force: true }).catch(() => {});
+    }
+});
+
+// ===================================
+// SAVE WEBFONT
+// Stratus: {sub}/webfonts/{ts}_{name}/  — one virtual folder per save
+// Index:   {sub}/webfonts/_index.json  — catalogue for list/delete
+// Local fallback: os.tmpdir()/svgforge-wf/
+// ===================================
+app.post("/save-webfont", async (req, res) => {
+    const authCtx = getSession(req);
+    if (!authCtx) return res.status(401).json({ success: false, message: "Sign in to save WebFonts" });
+    try {
+        const { fontName, fonts, css, previewHtml } = req.body || {};
+        if (!fontName || !fonts) return res.status(400).json({ success: false, message: "Missing fontName or fonts" });
+
+        // sub = OneAuth user's unique identifier used as the top-level folder
+        const sub      = String(authCtx.session.user.id || authCtx.session.user.email || "user")
+            .replace(/[^a-zA-Z0-9._@-]/g, "_").slice(0, 40);
+        const safeName = String(fontName).replace(/[^a-zA-Z0-9-_]/g, "_").slice(0, 32);
+        const ts       = Date.now();
+        const entryId  = `${ts}_${safeName}`;
+        const folderKey = `${sub}/webfonts/${entryId}`;
+
+        // Detect Catalyst runtime by the presence of project credential headers
+        const inCatalyst = !!(req.headers["x-zc-projectid"] || req.headers["x-zc-admin-cred-token"]);
+
+        if (inCatalyst) {
+            const uploads = [
+                ...(["woff2","woff","ttf","eot"]).filter(t => fonts[t]).map(t =>
+                    stratusPut(req, `${folderKey}/${safeName}.${t}`, Buffer.from(fonts[t], "base64"),
+                        t === "woff2" ? "font/woff2" : `font/${t}`)
+                ),
+                fonts.svg   && stratusPut(req, `${folderKey}/${safeName}.svg`,          Buffer.from(fonts.svg,   "base64"), "image/svg+xml"),
+                css         && stratusPut(req, `${folderKey}/${safeName}.css`,          Buffer.from(css,         "utf8"  ), "text/css"),
+                previewHtml && stratusPut(req, `${folderKey}/${safeName}_preview.html`, Buffer.from(previewHtml, "utf8"  ), "text/html")
+            ].filter(Boolean);
+            await Promise.all(uploads);
+            const index = await stratusReadIndex(req, sub);
+            index.entries.unshift({ id: entryId, fontName: safeName, ts: String(ts), folderKey });
+            await stratusWriteIndex(req, sub, index);
+            return res.json({ success: true, id: entryId });
+        }
+
+        // ── Local-dev fallback ────────────────────────────────────────────────
+        const localDir = path.join(LOCAL_WF_DIR, entryId);
+        fs.mkdirSync(localDir, { recursive: true });
+        const files = {};
+        for (const t of ["woff2","woff","ttf","eot","svg"]) {
+            if (fonts[t]) { fs.writeFileSync(path.join(localDir, `${safeName}.${t}`), Buffer.from(fonts[t], "base64")); files[t] = t; }
+        }
+        if (css)         { fs.writeFileSync(path.join(localDir, `${safeName}.css`),          css,         "utf8"); files.css  = "css";  }
+        if (previewHtml) { fs.writeFileSync(path.join(localDir, `${safeName}_preview.html`), previewHtml, "utf8"); files.html = "html"; }
+        const idx = localWfRead();
+        idx.entries.unshift({ id: entryId, sub, fontName: safeName, ts: String(ts), localDir, files });
+        localWfWrite(idx);
+        return res.json({ success: true, id: entryId });
+
+    } catch (err) {
+        console.error("[save-webfont]", err);
+        res.status(500).json({ success: false, message: err.message || "Save failed" });
+    }
+});
+
+// ===================================
+// LIST USER'S SAVED WEBFONTS
+// ===================================
+app.get("/list-webfonts", async (req, res) => {
+    const authCtx = getSession(req);
+    if (!authCtx) return res.status(401).json({ success: false, message: "Unauthorized" });
+    try {
+        const sub = String(authCtx.session.user.id || authCtx.session.user.email || "user")
+            .replace(/[^a-zA-Z0-9._@-]/g, "_").slice(0, 40);
+
+        const inCatalyst = !!(req.headers["x-zc-projectid"] || req.headers["x-zc-admin-cred-token"]);
+
+        if (inCatalyst) {
+            const index = await stratusReadIndex(req, sub);
+            return res.json({ success: true,
+                fonts: (index.entries || []).map(e => ({
+                    id: e.id, fontName: e.fontName, ts: e.ts, folderKey: e.folderKey
+                }))
+            });
+        }
+
+        // ── Local-dev fallback ────────────────────────────────────────────────
+        const idx   = localWfRead();
+        const fonts = idx.entries.filter(e => e.sub === sub)
+            .map(e => ({ id: e.id, fontName: e.fontName, ts: e.ts,
+                         folderKey: `local:${e.id}`, files: e.files }));
+        return res.json({ success: true, fonts });
+
+    } catch (err) {
+        console.error("[list-webfonts]", err);
+        res.status(500).json({ success: false, message: err.message || "List failed" });
+    }
+});
+
+// ===================================
+// DELETE SAVED WEBFONT — removes Stratus objects + updates index
+// ===================================
+app.delete("/delete-webfont/:id", async (req, res) => {
+    const authCtx = getSession(req);
+    if (!authCtx) return res.status(401).json({ success: false, message: "Unauthorized" });
+    try {
+        const sub     = String(authCtx.session.user.id || authCtx.session.user.email || "user")
+            .replace(/[^a-zA-Z0-9._@-]/g, "_").slice(0, 40);
+        const entryId = req.params.id;
+
+        const inCatalyst = !!(req.headers["x-zc-projectid"] || req.headers["x-zc-admin-cred-token"]);
+
+        if (inCatalyst) {
+            const index = await stratusReadIndex(req, sub);
+            const entry = (index.entries || []).find(e => e.id === entryId);
+            if (!entry) return res.status(404).json({ success: false, message: "Not found" });
+            const fk   = entry.folderKey;
+            const name = entry.fontName;
+            // Delete all files in the virtual folder then update the index
+            await Promise.all(
+                ["woff2","woff","ttf","eot","svg","css"].map(ext => stratusDelete(req, `${fk}/${name}.${ext}`))
+                    .concat([stratusDelete(req, `${fk}/${name}_preview.html`)])
+            );
+            index.entries = index.entries.filter(e => e.id !== entryId);
+            await stratusWriteIndex(req, sub, index);
+            return res.json({ success: true });
+        }
+
+        // ── Local-dev fallback ────────────────────────────────────────────────
+        const idx   = localWfRead();
+        const entry = idx.entries.find(e => e.id === entryId && e.sub === sub);
+        if (!entry) return res.status(404).json({ success: false, message: "Not found" });
+        if (entry.localDir) { try { fs.rmSync(entry.localDir, { recursive: true, force: true }); } catch (_) {} }
+        idx.entries = idx.entries.filter(e => e.id !== entryId);
+        localWfWrite(idx);
+        return res.json({ success: true });
+
+    } catch (err) {
+        console.error("[delete-webfont]", err);
+        res.status(500).json({ success: false, message: err.message || "Delete failed" });
+    }
+});
+
+// ===================================
+// DOWNLOAD WEBFONT FILE
+// Stratus: GET /get-webfont-file?key={sub}/webfonts/{entryId}/{filename}
+// Local:   GET /get-webfont-file?key=local:{entryId}/{filename}
+// ===================================
+app.get("/get-webfont-file", async (req, res) => {
+    const key = String(req.query.key || "");
+    if (!key) return res.status(400).json({ success: false, message: "Missing key param" });
+
+    if (key.startsWith("local:")) {
+        const rest    = key.slice(6);
+        const slash   = rest.indexOf("/");
+        const entryId = rest.slice(0, slash);
+        const fname   = rest.slice(slash + 1);
+        const idx     = localWfRead();
+        const entry   = idx.entries.find(e => e.id === entryId);
+        if (!entry) return res.status(404).send("Not found");
+        const fpath   = path.join(entry.localDir, fname);
+        if (!fs.existsSync(fpath)) return res.status(404).send("File not found");
+        res.setHeader("Content-Disposition", `attachment; filename="${fname}"`);
+        return res.sendFile(fpath);
+    }
+
+    try {
+        const buffer = await stratusGet(req, key);
+        const fname  = key.split("/").pop() || "download";
+        res.setHeader("Content-Disposition", `attachment; filename="${fname}"`);
+        res.setHeader("Cache-Control", "public, max-age=86400");
+        return res.send(buffer);
+    } catch (err) {
+        if (!res.headersSent) res.status(500).json({ success: false, message: err.message });
     }
 });
 

@@ -12,9 +12,11 @@
    */
   SF.switchPage = function (page) {
     state.page = page;
-    // Ensure webfont page is hidden when navigating to any other page
+    // Hide floating pages on every navigation
     $('#webfontPage').addClass('hidden');
     $('#webfontBtn').removeClass('active');
+    $('#savedWebfontsPage').addClass('hidden');
+    $('#savedWebfontsBtn').removeClass('active');
 
     if (page === 'helpdoc') {
       $('.content').first().addClass('hidden');
@@ -154,6 +156,31 @@
         $('#docRightPanel').addClass('hidden');
         $('.main').removeClass('has-right-panel');
       }
+    } else if (page === 'savedwebfonts') {
+      $('.content').first().addClass('hidden');
+      $('#helpDocPage').addClass('hidden');
+      $('#iconLibraryPage').addClass('hidden');
+      $('#mostUsedPage').addClass('hidden');
+      $('#requestIconPage').addClass('hidden');
+      $('#savedSpritesPage').addClass('hidden');
+      $('#savedWebfontsPage').removeClass('hidden');
+      $('#savedWebfontsBtn').addClass('active');
+      $('#helpDocBtn').removeClass('active');
+      $('#iconLibraryBtn').removeClass('active');
+      $('#mostUsedBtn').removeClass('active');
+      $('#requestIconNavBtn').removeClass('active');
+      $('#savedSpritesBtn').removeClass('active');
+      $('.sidebar-link[data-mode]').removeClass('active');
+      $('#pageTitle').text('Saved WebFonts');
+      $('#pageBreadcrumb').text('Output');
+      $('#generateBtn').addClass('hidden');
+      if (typeof SF.hideDocRightPanel === 'function') {
+        SF.hideDocRightPanel();
+      } else {
+        $('#docRightPanel').addClass('hidden');
+        $('.main').removeClass('has-right-panel');
+      }
+      if (typeof SF.loadSavedWebFonts === 'function') SF.loadSavedWebFonts();
     } else {
       $('#helpDocPage').addClass('hidden');
       $('#iconLibraryPage').addClass('hidden');
